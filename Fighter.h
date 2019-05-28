@@ -28,14 +28,14 @@ Equipment:
 - 2 Handaxes	1d6 slashing | Light; Thrown (range 20ft/60ft)[4/12] (for this roguelike every 5ft is one tile)
 */
 #pragma once
-#ifndef PLAYERCHARACTER
-#define PLAYERCHARACTER
+#ifndef FIGHTER
+#define FIGHTER
 #include <string>
 #include <time.h>
-#include "Character.h"
+#include "PlayerCharacter.h"
 
 
-class PlayerCharacter : public Character
+class Fighter : public PlayerCharacter
 {
 public:
 
@@ -43,22 +43,53 @@ public:
 	// ======== VARIABLES =========
 	// ============================
 
-	// Player Info
-	std::string race = "";
-	int proficiencyBonus = 0;
-	std::string Language = "";
-	std::string dndClass = "";
-	std::string Equipment = "";
-
 	// ============================
 	// ========= METHODS ==========
 	// ============================
 
-	PlayerCharacter() {};
-	virtual ~PlayerCharacter() {};
+	Fighter()
+	{
+		// Player Info
+		name = "Bruenor";
+		hitPoints = 13;
+		armorClass = 16;
+		hasShield = true;
+		speed = 25;
+		OA_AC = armorClass - (speed - 30) / 5;
+		race = "Mountain Dwarf";
+		proficiencyBonus = 2;
+		Language = "Common and Dwarvish";
+		dndClass = "Fighter(Champion Path)";
+		Equipment = "a. Battleaxe : 1d8 slashing | Versatile(1d10)\nb. 2 Handaxes : 1d6 slashing | Light; Thrown(range 4/12)";
 
-	virtual int attack() = 0;
-	virtual int damage() = 0;
+		// Stats
+		STR = 17;
+		DEX = 10;
+		CON = 16;
+		INT = 8;
+		WIS = 13;
+		CHA = 12;
+
+		// Stat Modifiers
+		int modSTR = statMod(STR);
+		int modDEX = statMod(DEX);
+		int modCON = statMod(CON);
+		int modINT = statMod(INT);
+		int modWIS = statMod(WIS);
+		int modCHA = statMod(CHA);
+	};
+	~Fighter() {};
+
+	int attack()
+	{
+		return roll20() + proficiencyBonus + modSTR;
+	};
+	
+	int damage()
+	{
+		return roll(1, 8) + modSTR;
+	};
+
 };
 
 #endif

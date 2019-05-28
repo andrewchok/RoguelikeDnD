@@ -155,13 +155,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EnemyCharacter.cpp" />
     <ClCompile Include="RoguelikeDnD.cpp" />
-    <ClCompile Include="PlayerCharacter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Fighter.h" />
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="EnemyCharacter.h" />
+    <ClInclude Include="Goblin.h" />
     <ClInclude Include="KeyStrokes.h" />
     <ClInclude Include="PlayerCharacter.h" />
+    <ClInclude Include="Units.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

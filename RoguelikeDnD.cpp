@@ -4,7 +4,7 @@
 #include <string>
 #include <conio.h>
 #include "KeyStrokes.h"
-#include "PlayerCharacter.h"
+#include "Units.h"
 
 // Game dimension constants
 const int GAME_WIDTH = 80; 
@@ -25,7 +25,7 @@ std::string uiStr = "";
 std::string specialMsgStr = "";
 std::string gameStr = "";
 
-PlayerCharacter* player = new PlayerCharacter();
+Fighter* player = new Fighter();
 
 
 void clearMessage()
@@ -246,13 +246,15 @@ bool placePlayer()
 
 	int x_pos = 3;
 	int y_pos = 3;
+		
+	if (player->setLocation(x_pos, y_pos))
+	{
+		expMap[x_pos][y_pos] = '@';
 
-	expMap[x_pos][y_pos] = '@';
+		return true;
+	}
 
-	player->x_pos = x_pos;
-	player->y_pos = y_pos;
-
-	return true;
+	return false;
 }
 
 void updatePlayer()
