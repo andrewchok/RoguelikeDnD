@@ -33,6 +33,7 @@ Equipment:
 #include <string>
 #include <time.h>
 #include "Character.h"
+#include "Enums.h"
 
 
 class PlayerCharacter : public Character
@@ -45,6 +46,7 @@ public:
 
 	// Player Info
 	std::string race = "";
+	int level = 0;
 	int proficiencyBonus = 0;
 	std::string Language = "";
 	std::string dndClass = "";
@@ -65,6 +67,30 @@ public:
 
 	virtual int attack() = 0;
 	virtual int damage() = 0;
+	bool movePlayer(Direction dir, char destination)
+	{
+		if (destination == 'G')
+		{
+			return false;
+		}
+		else {
+			switch (dir)
+			{
+			case MOVE_UP:
+				if (destination != '-') this->y_pos--;
+				return true;
+			case MOVE_DOWN:
+				if (destination != '-') this->y_pos++;
+				return true;
+			case MOVE_LEFT:
+				if (destination != '|') this->x_pos--;
+				return true;
+			case MOVE_RIGHT:
+				if (destination != '|') this->x_pos++;
+				return true;
+			}
+		}
+	};
 };
 
 #endif

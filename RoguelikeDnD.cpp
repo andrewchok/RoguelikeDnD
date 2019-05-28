@@ -5,6 +5,7 @@
 #include <conio.h>
 #include "KeyStrokes.h"
 #include "Units.h"
+#include "Enums.h"
 
 // Game dimension constants
 const int GAME_WIDTH = 80; 
@@ -17,20 +18,30 @@ int input = -1;
 char message[GAME_WIDTH + 1] = { 0 };
 char Map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
 char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored
-char ui[GAME_WIDTH + 1] = { 0 };						// ui -> user interface
+//char ui[GAME_WIDTH + 1] = { 0 };						// ui -> user interface
 char specialMsg[GAME_WIDTH + 1] = { 0 };
 std::string messageStr = "";
 std::string mapStr = "";
 std::string uiStr = "";
 std::string specialMsgStr = "";
 std::string gameStr = "";
+char destination = ' ';
+bool isFighting = false;
+bool wasPlayerHit = false;
+bool wasEnemyHit = false;
+int dmgDealtToPlayer = 0;
+int dmgDealtToEnemy = 0;
+bool newLvl = true;
 
-Fighter* player = new Fighter();
+PlayerCharacter* player = new Fighter();
+EnemyCharacter* enemy[10] = { 0 };
 
 // Method Declarations
+void drawDeathScreen();
 void clearMessage();
 void updateMessage();
 bool createRoom();
+bool spawnEnemy();
 void clearExpMap();
 void updateExpMap();
 void makeExpMap();
@@ -40,16 +51,71 @@ void updateSpecialMsg();
 void drawGame();
 bool placePlayer();
 void updatePlayer();
+void updateEnemy();
+
+void drawDeathScreen()
+{
+	std::cout <<
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"--------------------------------------------------------------------------------\n"
+		"--------------------------------------------------------------------------------\n"
+		"--------------------------------------------------------------------------------\n"
+		"                               YOU DIED.                                        \n"
+		"--------------------------------------------------------------------------------\n"
+		"--------------------------------------------------------------------------------\n"
+		"--------------------------------------------------------------------------------\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n";
+}
 
 void clearMessage()
 {
-	message[0] = '\n';
-	message[1] = '\0';
+	messageStr = "\n";
 }
 
 void updateMessage()
 {
 	// clear existing message and make message here 
+	
+	if (isFighting)
+	{
+		//bool wasPlayerHit 
+		//bool wasEnemyHit
+		//int dmgDealtToPlayer 
+		//int dmgDealtToEnemy 
+		messageStr = "";
+		messageStr = "You swung and ";
+		if (wasEnemyHit)
+		{
+			messageStr += "hit " + enemy[0]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
+		}
+		else messageStr += "missed! ";
+
+		messageStr += enemy[0]->name + " swung and ";
+		if (wasPlayerHit)
+		{
+			messageStr += "hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
+		}
+		else messageStr += "missed! ";
+
+		messageStr += "\n";
+
+	}
 }
 
 bool createRoom()
@@ -84,6 +150,28 @@ bool createRoom()
 	return true;
 }
 
+bool spawnEnemy()
+{
+	// randomly check for how many enemies to spawn based on floor
+	// spawn said enemy
+	// choose random room
+	// place randomly in that room but not on top of any items
+
+	int x_pos = 5;
+	int y_pos = 5;
+
+	enemy[0] = new Goblin();
+
+	if (enemy[0]->setLocation(x_pos, y_pos))
+	{
+		expMap[x_pos][y_pos] = 'G';
+
+		return true;
+	}
+
+	return false;
+}
+
 void clearExpMap()
 {
 	for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -98,7 +186,7 @@ void clearExpMap()
 
 void updateExpMap()
 {
-	createRoom();
+	createRoom(); // to be moved to actuall map and not explored map
 }
 
 void makeExpMap()
@@ -142,8 +230,6 @@ void initUI()
 	// ui[68 - 78] = "Hunger:999\n"
 
 	uiStr = "Floor:999 HP:999(999) AC:99 Atk:+99 Dmg:99d99 Gold:99999 Exp:999999 Hunger:999\n";
-
-	specialMsgStr = uiStr;
 }
 
 void updateUI()
@@ -152,51 +238,49 @@ void updateUI()
 	// Floor [6 - 8]
 	str = std::to_string(player->floor);
 	str.resize(4);
-	specialMsgStr.replace(6, 4, str);
+	uiStr.replace(6, 4, str);
 	// Hit Points (HP) values [13 - 20]
 	str = std::to_string(player->hitPoints) + "(" + std::to_string(player->maxHitPoints) + ")";
 	str.resize(8);
-	specialMsgStr.replace(13, 8, str);
+	uiStr.replace(13, 8, str);
 	// Armor Class (AC) values [25 - 26]
 	if(player->hasShield) str = std::to_string(player->armorClass + 2);
 	else str = std::to_string(player->armorClass);
 	str.resize(3);
-	specialMsgStr.replace(25, 3, str);
+	uiStr.replace(25, 3, str);
 	// Attack Bonus (Atk) values [32 - 34]
 	str = "+" + std::to_string(player->proficiencyBonus + player->modSTR);
 	str.resize(4);
-	specialMsgStr.replace(32, 4, str);
+	uiStr.replace(32, 4, str);
 	// Damage Roll (Dmg) values [40 - 44]
 	str = player->dmgRoll;
 	str.resize(6);
-	specialMsgStr.replace(40, 6, str);
+	uiStr.replace(40, 6, str);
 	// Gold values [51 - 55]
 	str = std::to_string(player->gold);
 	str.resize(6);
-	specialMsgStr.replace(51, 6, str);
+	uiStr.replace(51, 6, str);
 	// Experience Points (Exp) values [61 - 66]
 	str = std::to_string(player->exp);
 	str.resize(7);
-	specialMsgStr.replace(61, 7, str);
+	uiStr.replace(61, 7, str);
 	// Hunger values [75 - 77]
 	str = std::to_string(player->hunger);
 	str.resize(3);
-	specialMsgStr.replace(75, 3, str);
+	uiStr.replace(75, 3, str);
 }
 
 void updateSpecialMsg()
 {
 	// write code to show special msg
-	specialMsg[0] = 's';
-	specialMsg[1] = 'p';
-	specialMsg[2] = '\n';
-	specialMsg[3] = '\0';
+	specialMsgStr = "";
+	specialMsgStr = player->name + " Level: " + std::to_string(player->level) + " Class: " + player->dndClass + "\n";
 }
 
 void drawGame()
 {
 	gameStr = "";
-	gameStr = message + mapStr + uiStr + specialMsgStr;
+	gameStr = messageStr + mapStr + uiStr + specialMsgStr;
 	std::cout << gameStr;
 }
 
@@ -223,23 +307,48 @@ void updatePlayer()
 	expMap[player->x_pos][player->y_pos] = '@';
 }
 
+void updateEnemy()
+{
+	if (enemy[0] != nullptr)
+	{
+		if (enemy[0]->hitPoints > 0) expMap[enemy[0]->x_pos][enemy[0]->y_pos] = 'G';
+		else
+		{
+			delete enemy[0];
+			enemy[0] = nullptr;
+		}
+	}
+}
+
+
+// Main function
+
 int main()
 {
-	bool newLvl = true;
 	clearMessage();
 	clearExpMap();
 	initUI();
+	spawnEnemy();
 
 	while (true)
 	{
-		updateMessage();
+		if (player->hitPoints < 0)
+		{
+			system("CLS");
+			drawDeathScreen();
+			break;
+		}
+
 		updateExpMap();
+
 		if (newLvl)
 		{
 			placePlayer();
 			newLvl = false;
 		}
 		else updatePlayer();
+		updateEnemy();
+
 		makeExpMap();
 		updateUI();
 		updateSpecialMsg();
@@ -249,6 +358,8 @@ int main()
 		drawGame();
 
 		input = _getch();
+
+		clearMessage();
 
 		if (input == KEY_BRANCH_0 || input == KEY_BRANCH_244)
 		{
@@ -267,17 +378,65 @@ int main()
 			switch (input)
 			{
 			case KEY_ARROW_UP : 
-				if (expMap[player->x_pos][player->y_pos - 1] != '-') player->y_pos--;
+				//if (expMap[player->x_pos][player->y_pos - 1] != '-') player->y_pos--;
+				destination = expMap[player->x_pos][player->y_pos - 1];
+				isFighting = !player->movePlayer(MOVE_UP, destination);
 				break;
 			case KEY_ARROW_DOWN : 
-				if (expMap[player->x_pos][player->y_pos + 1] != '-') player->y_pos++;
+				//if (expMap[player->x_pos][player->y_pos + 1] != '-') player->y_pos++;
+				destination = expMap[player->x_pos][player->y_pos + 1];
+				isFighting = !player->movePlayer(MOVE_DOWN, destination);
 				break;
 			case KEY_ARROW_LEFT : 
-				if (expMap[player->x_pos - 1][player->y_pos] != '|') player->x_pos--;
+				//if (expMap[player->x_pos - 1][player->y_pos] != '|') player->x_pos--;
+				destination = expMap[player->x_pos - 1][player->y_pos];
+				isFighting = !player->movePlayer(MOVE_LEFT, destination);
 				break;
 			case KEY_ARROW_RIGHT : 
-				if (expMap[player->x_pos + 1][player->y_pos] != '|') player->x_pos++;
+				//if (expMap[player->x_pos + 1][player->y_pos] != '|') player->x_pos++;
+				destination = expMap[player->x_pos + 1][player->y_pos];
+				isFighting = !player->movePlayer(MOVE_RIGHT, destination);
 				break;
+			}
+
+			if (isFighting)
+			{
+				if (destination == 'G')
+				{
+					if (enemy[0]->hasShield)
+					{
+						wasEnemyHit = (player->attack() >= (enemy[0]->armorClass + 2)); //player does damage
+					}
+					else
+					{
+						wasEnemyHit = (player->attack() > enemy[0]->armorClass); //player does damage
+					}
+
+					if (wasEnemyHit) // player to enemy
+					{
+						dmgDealtToEnemy = player->damage();
+						enemy[0]->hitPoints -= dmgDealtToEnemy;
+					}
+					else dmgDealtToEnemy = 0;
+
+					if (player->hasShield)
+					{
+						wasPlayerHit = (enemy[0]->attack() >= (player->armorClass + 2)); //enemy does damage
+					}
+					else
+					{
+						wasPlayerHit = (enemy[0]->attack() > player->armorClass); //enemy does damage
+					}
+
+					if (wasPlayerHit) // enemy to player
+					{
+						dmgDealtToPlayer = enemy[0]->damage();
+						player->hitPoints -= dmgDealtToPlayer;
+					}
+					else dmgDealtToPlayer = 0;
+
+					updateMessage();
+				}
 			}
 
 		}

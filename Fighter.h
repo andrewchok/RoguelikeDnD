@@ -51,6 +51,7 @@ public:
 	{
 		// Player Info
 		name = "Bruenor";
+		level = 1;
 		hitPoints = 13;
 		maxHitPoints = 13;
 		armorClass = 16;
@@ -73,12 +74,12 @@ public:
 		CHA = 12;
 
 		// Stat Modifiers
-		int modSTR = statMod(STR);
-		int modDEX = statMod(DEX);
-		int modCON = statMod(CON);
-		int modINT = statMod(INT);
-		int modWIS = statMod(WIS);
-		int modCHA = statMod(CHA);
+		modSTR = statMod(STR);
+		modDEX = statMod(DEX);
+		modCON = statMod(CON);
+		modINT = statMod(INT);
+		modWIS = statMod(WIS);
+		modCHA = statMod(CHA);
 	};
 	~Fighter() {};
 

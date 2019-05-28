@@ -43,16 +43,21 @@ public:
 		int modWIS = statMod(WIS);
 		int modCHA = statMod(CHA);
 	};
-	~Goblin();
+	~Goblin() {};
 
-	int attack() 
+	int attack()
+	{
+		return roll20() + 4;
+	};
+
+	int damage()
 	{
 		return roll(1, 6) + 2;
-	}
-	virtual int damage() = 0;
-	virtual void move() = 0;
-	virtual void idle() = 0;
-	virtual bool canSeePlayer() = 0;
+	};
+
+	void move() {};
+	void idle() {};
+	bool canSeePlayer() { return true; };
 };
 
 #endif

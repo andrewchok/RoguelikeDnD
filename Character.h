@@ -22,20 +22,20 @@ public:
 	int OA_AC = armorClass - 1;
 
 	// Stats
-	int STR = 0;
-	int DEX = 0;
-	int CON = 0;
-	int INT = 0;
-	int WIS = 0;
-	int CHA = 0;
+	int STR = 999;
+	int DEX = 999;
+	int CON = 999;
+	int INT = 999;
+	int WIS = 999;
+	int CHA = 999;
 
 	// Stat Modifiers
-	int modSTR = -1;
-	int modDEX = 2;
-	int modCON = 0;
-	int modINT = 0;
-	int modWIS = -1;
-	int modCHA = -1;
+	int modSTR = 999;
+	int modDEX = 999;
+	int modCON = 999;
+	int modINT = 999;
+	int modWIS = 999;
+	int modCHA = 999;
 
 	int x_pos = -1;
 	int y_pos = -1;
