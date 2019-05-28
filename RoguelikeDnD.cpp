@@ -274,7 +274,7 @@ void updateSpecialMsg()
 {
 	// write code to show special msg
 	specialMsgStr = "";
-	specialMsgStr = player->name + " Level: " + std::to_string(player->level) + " Class: " + player->dndClass + "\n";
+	specialMsgStr = "Name:" + player->name + "     Level:" + std::to_string(player->level) + "    Class:" + player->dndClass + "\n";
 }
 
 void drawGame()
@@ -332,7 +332,7 @@ int main()
 
 	while (true)
 	{
-		if (player->hitPoints < 0)
+		if (player->hitPoints <= 0)
 		{
 			system("CLS");
 			drawDeathScreen();
