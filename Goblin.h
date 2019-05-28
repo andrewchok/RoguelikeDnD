@@ -52,7 +52,7 @@ public:
 
 	int damage()
 	{
-		return roll(1, 6) + 2;
+		return roll(1, 6) + 12;
 	};
 
 	void move() {};
