@@ -52,6 +52,7 @@ public:
 		// Player Info
 		name = "Bruenor";
 		hitPoints = 13;
+		maxHitPoints = 13;
 		armorClass = 16;
 		hasShield = true;
 		speed = 25;
@@ -61,6 +62,7 @@ public:
 		Language = "Common and Dwarvish";
 		dndClass = "Fighter(Champion Path)";
 		Equipment = "a. Battleaxe : 1d8 slashing | Versatile(1d10)\nb. 2 Handaxes : 1d6 slashing | Light; Thrown(range 4/12)";
+		dmgRoll = "1d8";
 
 		// Stats
 		STR = 17;

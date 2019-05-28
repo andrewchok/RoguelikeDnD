@@ -15,6 +15,7 @@ public:
 	// Character Info
 	std::string name = "";
 	int hitPoints = 0;
+	int maxHitPoints = 0;
 	int armorClass = 0;
 	bool hasShield = false;
 	int speed = 0;

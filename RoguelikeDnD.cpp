@@ -27,6 +27,19 @@ std::string gameStr = "";
 
 Fighter* player = new Fighter();
 
+// Method Declarations
+void clearMessage();
+void updateMessage();
+bool createRoom();
+void clearExpMap();
+void updateExpMap();
+void makeExpMap();
+void initUI();
+void updateUI();
+void updateSpecialMsg();
+void drawGame();
+bool placePlayer();
+void updatePlayer();
 
 void clearMessage()
 {
@@ -103,123 +116,72 @@ void makeExpMap()
 void initUI()
 {
 	// Floor [0 - 9] values [6 - 8]
-	ui[0] = 'F';
-	ui[1] = 'l';
-	ui[2] = 'o';
-	ui[3] = 'o';
-	ui[4] = 'r';
-	ui[5] = ':';
-	ui[6] = '1';
-	ui[7] = ' ';
-	ui[8] = ' ';
-	ui[9] = ' ';
+	// ui[0 - 9] = "Floor:999 "
 
 	// Hit Points (HP) [10 - 21] values [13 - 20]
-	ui[10] = 'H';
-	ui[11] = 'P';
-	ui[12] = ':';
-	ui[13] = '1';
-	ui[14] = '0';
-	ui[15] = '(';
-	ui[16] = '1';
-	ui[17] = '0';
-	ui[18] = ')';
-	ui[19] = ' ';
-	ui[20] = ' ';
+	// ui[10 - 21] = "HP:999(999) "
 
-	// Armor Class (AC) [22 - 26] values [24 - 25]
-	ui[21] = 'A';
-	ui[22] = 'C';
-	ui[23] = ':';
-	ui[24] = '1';
-	ui[25] = '0';
-	ui[26] = ' ';
+	// Armor Class (AC) [22 - 27] values [25 - 26]
+	// ui[22 - 27] = "AC:99 "
 
-	// Attack Bonus (Atk) [27 - 34] values [31 - 33]
-	ui[27] = 'A';
-	ui[28] = 't';
-	ui[29] = 'k';
-	ui[30] = ':';
-	ui[31] = '+';
-	ui[32] = '2';
-	ui[33] = ' ';
-	ui[34] = ' ';
+	// Attack Bonus (Atk) [28 - 35] values [32 - 34]
+	// ui[28 - 35] = "Atk:+99 "
 
-	// Damage Roll (Dmg) [35 - 44] values [39 - 43]
-	ui[35] = 'D';
-	ui[36] = 'm';
-	ui[37] = 'g';
-	ui[38] = ':';
-	ui[39] = '1';
-	ui[40] = 'd';
-	ui[41] = '6';
-	ui[42] = ' ';
-	ui[43] = ' ';
-	ui[44] = ' ';
+	// Damage Roll (Dmg) [36 - 45] values [40 - 44]
+	// ui[36 - 45] = "Dmg:99d20 "
 
-	// Gold [45 - 55] values [50 - 54]
+	// Gold [46 - 56] values [51 - 55]
 	// for this Roguelike Gold will be equivalent to Silver Pieces
-	ui[45] = 'G';
-	ui[46] = 'o';
-	ui[47] = 'l';
-	ui[48] = 'd';
-	ui[49] = ':';
-	ui[50] = '0';
-	ui[51] = ' ';
-	ui[52] = ' ';
-	ui[53] = ' ';
-	ui[54] = ' ';
-	ui[55] = ' ';
+	// ui[46 - 56] = "Gold:99999 "
 
-	// Experience Points (Exp) [56 - 66] values [60 - 65]
-	ui[56] = 'E';
-	ui[57] = 'x';
-	ui[58] = 'p';
-	ui[59] = ':';
-	ui[60] = '0';
-	ui[61] = ' ';
-	ui[62] = ' ';
-	ui[63] = ' ';
-	ui[64] = ' ';
-	ui[65] = ' ';
-	ui[66] = ' ';
+	// Experience Points (Exp) [57 - 67] values [61 - 66]
+	// ui[57 - 67] = "Exp:999999 "
 
-	// Hunger [67 - 77] values [74 - 76]
+	// Hunger [68 - 78] values [75 - 77]
 	// for this Rogue like having Hunger management increases the difficulty 
-	ui[67] = 'H';
-	ui[68] = 'u';
-	ui[69] = 'n';
-	ui[70] = 'g';
-	ui[71] = 'e';
-	ui[72] = 'r';
-	ui[73] = ':';
-	ui[74] = '1';
-	ui[75] = '0';
-	ui[76] = '0';
-	
-	// new line char
-	ui[77] = '\n';
+	// ui[68 - 78] = "Hunger:999\n"
 
-	uiStr = ui;
+	uiStr = "Floor:999 HP:999(999) AC:99 Atk:+99 Dmg:99d99 Gold:99999 Exp:999999 Hunger:999\n";
+
+	specialMsgStr = uiStr;
 }
 
 void updateUI()
 {
+	std::string str = "";
 	// Floor [6 - 8]
-
+	str = std::to_string(player->floor);
+	str.resize(4);
+	specialMsgStr.replace(6, 4, str);
 	// Hit Points (HP) values [13 - 20]
-
-	// Armor Class (AC) values [24 - 25]
-
-	// Attack Bonus (Atk) values [31 - 33]
-
-	// Damage Roll (Dmg) values [39 - 43]
-
-	// Gold values [50 - 54]
-
-	// Experience Points (Exp) values [60 - 65]
-
-	// Hunger values [74 - 76]
+	str = std::to_string(player->hitPoints) + "(" + std::to_string(player->maxHitPoints) + ")";
+	str.resize(8);
+	specialMsgStr.replace(13, 8, str);
+	// Armor Class (AC) values [25 - 26]
+	if(player->hasShield) str = std::to_string(player->armorClass + 2);
+	else str = std::to_string(player->armorClass);
+	str.resize(3);
+	specialMsgStr.replace(25, 3, str);
+	// Attack Bonus (Atk) values [32 - 34]
+	str = "+" + std::to_string(player->proficiencyBonus + player->modSTR);
+	str.resize(4);
+	specialMsgStr.replace(32, 4, str);
+	// Damage Roll (Dmg) values [40 - 44]
+	str = player->dmgRoll;
+	str.resize(6);
+	specialMsgStr.replace(40, 6, str);
+	// Gold values [51 - 55]
+	str = std::to_string(player->gold);
+	str.resize(6);
+	specialMsgStr.replace(51, 6, str);
+	// Experience Points (Exp) values [61 - 66]
+	str = std::to_string(player->exp);
+	str.resize(7);
+	specialMsgStr.replace(61, 7, str);
+	// Hunger values [75 - 77]
+	str = std::to_string(player->hunger);
+	str.resize(3);
+	specialMsgStr.replace(75, 3, str);
 }
 
 void updateSpecialMsg()
@@ -231,11 +193,10 @@ void updateSpecialMsg()
 	specialMsg[3] = '\0';
 }
 
-
 void drawGame()
 {
 	gameStr = "";
-	gameStr = message + mapStr + uiStr + specialMsg;
+	gameStr = message + mapStr + uiStr + specialMsgStr;
 	std::cout << gameStr;
 }
 

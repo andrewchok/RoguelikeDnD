@@ -49,6 +49,12 @@ public:
 	std::string Language = "";
 	std::string dndClass = "";
 	std::string Equipment = "";
+	std::string dmgRoll = "";
+
+	int floor = 1;
+	int gold = 0;
+	int exp = 0;
+	int hunger = 100;
 
 	// ============================
 	// ========= METHODS ==========
