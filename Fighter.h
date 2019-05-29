@@ -52,7 +52,7 @@ public:
 		// Player Info
 		name = "Bruenor";
 		level = 1;
-		hitPoints = 999;//13;
+		hitPoints = 13;
 		maxHitPoints = 13;
 		armorClass = 16;
 		hasShield = true;

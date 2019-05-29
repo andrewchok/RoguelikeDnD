@@ -20,7 +20,7 @@ public:
 	{
 		// Enemy Info
 		name = "Goblin";
-		hitPoints = 999;//roll(2, 6);
+		hitPoints = roll(2, 6);
 		armorClass = 13;
 		hasShield = true;
 		speed = 30;
