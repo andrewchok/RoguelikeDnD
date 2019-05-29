@@ -23,6 +23,7 @@ public:
 	EnemyCharacter() {};
 	virtual ~EnemyCharacter() {};
 
+	virtual int crit() = 0;
 	virtual int attack() = 0;
 	virtual int damage() = 0;
 

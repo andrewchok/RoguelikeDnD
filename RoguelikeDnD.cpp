@@ -27,6 +27,8 @@ std::string specialMsgStr = "";
 std::string gameStr = "";
 char destination = ' ';
 bool isFighting = false;
+int playerHitRoll = 0;
+int enemyHitRoll[10] = { 0 };
 bool wasPlayerHit = false;
 bool wasEnemyHit = false;
 int dmgDealtToPlayer = 0;
@@ -102,20 +104,28 @@ void updateMessage()
 		messageStr = "You swung and ";
 		if (wasEnemyHit)
 		{
-			messageStr += "hit " + enemy[0]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
+			if (playerHitRoll == NAT_20) messageStr += "crit ";
+			else messageStr += "hit ";
+			
+			messageStr += enemy[0]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
 		}
 		else messageStr += "missed! ";
 
 		messageStr += enemy[0]->name + " swung and ";
 		if (wasPlayerHit)
 		{
-			messageStr += "hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
+			if (enemyHitRoll[0] == NAT_20) messageStr += "crit ";
+			else messageStr += "hit ";
+
+			messageStr += "you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
 		}
 		else messageStr += "missed! ";
 
-		messageStr += "\n";
 
 	}
+
+
+	messageStr += "\n";
 }
 
 bool createRoom()
@@ -405,32 +415,46 @@ int main()
 				{
 					if (enemy[0]->hasShield)
 					{
-						wasEnemyHit = (player->attack() >= (enemy[0]->armorClass + 2)); //player does damage
+						playerHitRoll = player->attack();
+						wasEnemyHit = (playerHitRoll >= (enemy[0]->armorClass + 2)); //player does damage
 					}
 					else
 					{
-						wasEnemyHit = (player->attack() > enemy[0]->armorClass); //player does damage
+						playerHitRoll = player->attack();
+						wasEnemyHit = (playerHitRoll > enemy[0]->armorClass); //player does damage
 					}
 
 					if (wasEnemyHit) // player to enemy
 					{
-						dmgDealtToEnemy = player->damage();
+						if (playerHitRoll == NAT_20)
+						{
+							dmgDealtToEnemy = player->crit() + player->damage();
+						}
+						else dmgDealtToEnemy = player->damage();
+
 						enemy[0]->hitPoints -= dmgDealtToEnemy;
 					}
 					else dmgDealtToEnemy = 0;
 
 					if (player->hasShield)
 					{
-						wasPlayerHit = (enemy[0]->attack() >= (player->armorClass + 2)); //enemy does damage
+						enemyHitRoll[0] = enemy[0]->attack();
+						wasPlayerHit = (enemyHitRoll[0] >= (player->armorClass + 2)); //enemy does damage
 					}
 					else
 					{
-						wasPlayerHit = (enemy[0]->attack() > player->armorClass); //enemy does damage
+						enemyHitRoll[0] = enemy[0]->attack();
+						wasPlayerHit = (enemyHitRoll[0] > player->armorClass); //enemy does damage
 					}
 
 					if (wasPlayerHit) // enemy to player
 					{
-						dmgDealtToPlayer = enemy[0]->damage();
+						if (enemyHitRoll[0] == NAT_20)
+						{
+							dmgDealtToPlayer = enemy[0]->crit() + enemy[0]->damage();
+						}
+						else dmgDealtToPlayer = enemy[0]->damage();
+
 						player->hitPoints -= dmgDealtToPlayer;
 					}
 					else dmgDealtToPlayer = 0;

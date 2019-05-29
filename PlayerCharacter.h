@@ -52,6 +52,8 @@ public:
 	std::string dndClass = "";
 	std::string Equipment = "";
 	std::string dmgRoll = "";
+	int restDiceCount = 1;
+	int restDiceType = 10;
 
 	int floor = 1;
 	int gold = 0;
@@ -65,6 +67,7 @@ public:
 	PlayerCharacter() {};
 	virtual ~PlayerCharacter() {};
 
+	virtual int crit() = 0;
 	virtual int attack() = 0;
 	virtual int damage() = 0;
 	bool movePlayer(Direction dir, char destination)

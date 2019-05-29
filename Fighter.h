@@ -52,7 +52,7 @@ public:
 		// Player Info
 		name = "Bruenor";
 		level = 1;
-		hitPoints = 13;
+		hitPoints = 999;//13;
 		maxHitPoints = 13;
 		armorClass = 16;
 		hasShield = true;
@@ -83,9 +83,15 @@ public:
 	};
 	~Fighter() {};
 
+	int crit()
+	{
+		return roll(1, 8);
+	};
+
 	int attack()
 	{
-		return roll20() + proficiencyBonus + modSTR;
+		int roll = roll20();
+		return (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
 	};
 	
 	int damage()

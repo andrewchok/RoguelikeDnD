@@ -20,7 +20,7 @@ public:
 	{
 		// Enemy Info
 		name = "Goblin";
-		hitPoints = roll(2, 6);
+		hitPoints = 999;//roll(2, 6);
 		armorClass = 13;
 		hasShield = true;
 		speed = 30;
@@ -45,9 +45,15 @@ public:
 	};
 	~Goblin() {};
 
+	int crit() 
+	{
+		return roll(1, 6);
+	};
+
 	int attack()
 	{
-		return roll20() + 4;
+		int roll = roll20();
+		return (roll == NAT_20) ? NAT_20 : roll +4;
 	};
 
 	int damage()

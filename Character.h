@@ -4,6 +4,9 @@
 #include <string>
 #include <time.h>
 
+#define NAT_20 99
+#define NAT_1 -99
+
 class Character
 {
 public:
@@ -50,7 +53,7 @@ public:
 	int roll(int num, int value)
 	{
 		int result = 0;
-		srand(time(NULL));
+		srand(time(NULL) * 13 * rand());
 
 		for (int i = 0; i < num; i++)
 		{
@@ -63,11 +66,11 @@ public:
 	{
 		int result = 0;
 
-		srand(time(NULL));
+		srand(time(NULL) * 7 * rand());
 		result += rand() % 20 + 1;
 
-		if (result == 20); // nat 20
-		if (result == 1); // nat 1
+		if (result == 20) return NAT_20; // nat 20
+		if (result == 1) return NAT_1; // nat 1
 
 		return result;
 	};
@@ -89,6 +92,7 @@ public:
 		return false;
 	};
 
+	virtual int crit() = 0;
 	virtual int attack() = 0;
 	virtual int damage() = 0;
 };
