@@ -40,21 +40,28 @@ EnemyCharacter* enemy[10] = { 0 };
 
 // Method Declarations
 void drawDeathScreen();
+
 void clearMessage();
 void updateMessage();
+
 bool createRoom();
 bool spawnEnemy();
 void clearExpMap();
 void updateExpMap();
 void makeExpMap();
+
 void initUI();
 void updateUI();
 void updateSpecialMsg();
+
 void drawGame();
+
 bool placePlayer();
 void updatePlayer();
 void updateEnemy();
 
+
+// Method Definitions
 void drawDeathScreen()
 {
 	std::cout <<
@@ -416,7 +423,7 @@ int main()
 					if (enemy[0]->hasShield)
 					{
 						playerHitRoll = player->attack();
-						wasEnemyHit = (playerHitRoll >= (enemy[0]->armorClass + 2)); //player does damage
+						wasEnemyHit = (playerHitRoll >= (enemy[0]->armorClass + ShieldAC)); //player does damage
 					}
 					else
 					{
@@ -439,7 +446,7 @@ int main()
 					if (player->hasShield)
 					{
 						enemyHitRoll[0] = enemy[0]->attack();
-						wasPlayerHit = (enemyHitRoll[0] >= (player->armorClass + 2)); //enemy does damage
+						wasPlayerHit = (enemyHitRoll[0] >= (player->armorClass + ShieldAC)); //enemy does damage
 					}
 					else
 					{
