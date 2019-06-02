@@ -17,6 +17,7 @@ public:
 	// ============================
 
 	// Character Info
+	char token = '?';
 	std::string name = "";
 	int hitPoints = 0;
 	int maxHitPoints = 0;

@@ -50,6 +50,7 @@ public:
 	Fighter()
 	{
 		// Player Info
+		token = '@';
 		name = "Bruenor";
 		level = 1;
 		hitPoints = 13;

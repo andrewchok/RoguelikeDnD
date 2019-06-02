@@ -19,6 +19,7 @@ public:
 	Goblin()
 	{
 		// Enemy Info
+		token = 'G';
 		name = "Goblin";
 		hitPoints = roll(2, 6);
 		armorClass = 13;

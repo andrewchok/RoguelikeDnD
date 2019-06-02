@@ -6,19 +6,12 @@
 #include "KeyStrokes.h"
 #include "Units.h"
 #include "Enums.h"
-
-// Game dimension constants
-const int GAME_WIDTH = 80; 
-const int GAME_HEIGHT = 25;
-const int GAME_MAP_HEIGHT = 23;
+#include "GameMap.h"
 
 // Global Variables
 // GAME_WIDTH + 1 (for \n)
 int input = -1;
 char message[GAME_WIDTH + 1] = { 0 };
-char Map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
-char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored
-//char ui[GAME_WIDTH + 1] = { 0 };						// ui -> user interface
 char specialMsg[GAME_WIDTH + 1] = { 0 };
 std::string messageStr = "";
 std::string mapStr = "";
@@ -38,16 +31,15 @@ bool newLvl = true;
 PlayerCharacter* player = new Fighter();
 EnemyCharacter* enemy[10] = { 0 };
 
+GameMap* gameMap = new GameMap();
+
 // Method Declarations
 void drawDeathScreen();
 
 void clearMessage();
 void updateMessage();
 
-bool createRoom();
 bool spawnEnemy();
-void clearExpMap();
-void updateExpMap();
 void makeExpMap();
 
 void initUI();
@@ -135,38 +127,6 @@ void updateMessage()
 	messageStr += "\n";
 }
 
-bool createRoom()
-{
-	// location of top left corner of room
-	int x_loc = 0;
-	int y_loc = 0;
-
-	// size of room
-	int x_size = 10;
-	int y_size = 8;
-
-	for (int y = y_loc; y < y_loc + y_size; y++)
-	{
-		for (int x = x_loc; x < (x_loc + x_size) && y == y_loc; x++)
-		{
-			expMap[x][y] = '-';
-		}
-
-		for (int x = x_loc; x < (x_loc + x_size) && y != y_loc && y != (y_size - 1); x++)
-		{
-			if (x == x_loc || x == (x_loc + x_size - 1)) expMap[x][y] = '|';
-			else expMap[x][y] = '.';
-		}
-
-		for (int x = x_loc; x < (x_loc + x_size) && y == (y_loc + y_size - 1); x++)
-		{
-			expMap[x][y] = '-';
-		}
-	}
-
-	return true;
-}
-
 bool spawnEnemy()
 {
 	// randomly check for how many enemies to spawn based on floor
@@ -177,33 +137,21 @@ bool spawnEnemy()
 	int x_pos = 5;
 	int y_pos = 5;
 
+	//for (int i = 0; i < enemyCount; i++)
+	//{
+	//	expMap[x_pos][y_pos] = 'G';//enemy[i];
+	//}
 	enemy[0] = new Goblin();
 
 	if (enemy[0]->setLocation(x_pos, y_pos))
 	{
-		expMap[x_pos][y_pos] = 'G';
+		gameMap->expMap[x_pos][y_pos] = 'G';
 
 		return true;
 	}
 
+
 	return false;
-}
-
-void clearExpMap()
-{
-	for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-	{
-		for (int x = 0; x < GAME_WIDTH; x++)
-		{
-			expMap[x][y] = ' ';
-		}
-		expMap[GAME_WIDTH][y] = '\n';
-	}
-}
-
-void updateExpMap()
-{
-	createRoom(); // to be moved to actuall map and not explored map
 }
 
 void makeExpMap()
@@ -213,7 +161,7 @@ void makeExpMap()
 	{
 		for (int x = 0; x < GAME_WIDTH + 1; x++)
 		{
-			mapStr += expMap[x][y];
+			mapStr += gameMap->expMap[x][y];
 		}
 	}
 }
@@ -311,7 +259,7 @@ bool placePlayer()
 		
 	if (player->setLocation(x_pos, y_pos))
 	{
-		expMap[x_pos][y_pos] = '@';
+		gameMap->expMap[x_pos][y_pos] = '@';
 
 		return true;
 	}
@@ -321,14 +269,14 @@ bool placePlayer()
 
 void updatePlayer()
 {
-	expMap[player->x_pos][player->y_pos] = '@';
+	gameMap->expMap[player->x_pos][player->y_pos] = '@';
 }
 
 void updateEnemy()
 {
 	if (enemy[0] != nullptr)
 	{
-		if (enemy[0]->hitPoints > 0) expMap[enemy[0]->x_pos][enemy[0]->y_pos] = 'G';
+		if (enemy[0]->hitPoints > 0) gameMap->expMap[enemy[0]->x_pos][enemy[0]->y_pos] = 'G';
 		else
 		{
 			delete enemy[0];
@@ -343,7 +291,6 @@ void updateEnemy()
 int main()
 {
 	clearMessage();
-	clearExpMap();
 	initUI();
 	spawnEnemy();
 
@@ -356,10 +303,11 @@ int main()
 			break;
 		}
 
-		updateExpMap();
+		gameMap->refreshExpMap();
 
 		if (newLvl)
 		{
+			gameMap->createNewExpMap();
 			placePlayer();
 			newLvl = false;
 		}
@@ -396,22 +344,22 @@ int main()
 			{
 			case KEY_ARROW_UP : 
 				//if (expMap[player->x_pos][player->y_pos - 1] != '-') player->y_pos--;
-				destination = expMap[player->x_pos][player->y_pos - 1];
+				destination = gameMap->expMap[player->x_pos][player->y_pos - 1];
 				isFighting = !player->movePlayer(MOVE_UP, destination);
 				break;
 			case KEY_ARROW_DOWN : 
 				//if (expMap[player->x_pos][player->y_pos + 1] != '-') player->y_pos++;
-				destination = expMap[player->x_pos][player->y_pos + 1];
+				destination = gameMap->expMap[player->x_pos][player->y_pos + 1];
 				isFighting = !player->movePlayer(MOVE_DOWN, destination);
 				break;
 			case KEY_ARROW_LEFT : 
 				//if (expMap[player->x_pos - 1][player->y_pos] != '|') player->x_pos--;
-				destination = expMap[player->x_pos - 1][player->y_pos];
+				destination = gameMap->expMap[player->x_pos - 1][player->y_pos];
 				isFighting = !player->movePlayer(MOVE_LEFT, destination);
 				break;
 			case KEY_ARROW_RIGHT : 
 				//if (expMap[player->x_pos + 1][player->y_pos] != '|') player->x_pos++;
-				destination = expMap[player->x_pos + 1][player->y_pos];
+				destination = gameMap->expMap[player->x_pos + 1][player->y_pos];
 				isFighting = !player->movePlayer(MOVE_RIGHT, destination);
 				break;
 			}

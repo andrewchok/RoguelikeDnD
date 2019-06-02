@@ -77,21 +77,25 @@ public:
 			return false;
 		}
 		else {
-			switch (dir)
+			if (!(destination == '-' || destination == '|'))
 			{
-			case MOVE_UP:
-				if (destination != '-') this->y_pos--;
-				return true;
-			case MOVE_DOWN:
-				if (destination != '-') this->y_pos++;
-				return true;
-			case MOVE_LEFT:
-				if (destination != '|') this->x_pos--;
-				return true;
-			case MOVE_RIGHT:
-				if (destination != '|') this->x_pos++;
-				return true;
+				switch (dir)
+				{
+				case MOVE_UP:
+					this->y_pos--;
+					return true;
+				case MOVE_DOWN:
+					this->y_pos++;
+					return true;
+				case MOVE_LEFT:
+					this->x_pos--;
+					return true;
+				case MOVE_RIGHT:
+					this->x_pos++;
+					return true;
+				}
 			}
+			else return false;
 		}
 	};
 };

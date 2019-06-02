@@ -164,7 +164,9 @@
     <ClInclude Include="EnemyCharacter.h" />
     <ClInclude Include="Goblin.h" />
     <ClInclude Include="KeyStrokes.h" />
+    <ClInclude Include="GameMap.h" />
     <ClInclude Include="PlayerCharacter.h" />
+    <ClInclude Include="Room.h" />
     <ClInclude Include="Units.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
