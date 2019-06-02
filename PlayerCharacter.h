@@ -58,7 +58,7 @@ public:
 	int floor = 1;
 	int gold = 0;
 	int exp = 0;
-	int hunger = 100;
+	int hunger = 1000;
 
 	// ============================
 	// ========= METHODS ==========
@@ -79,6 +79,8 @@ public:
 		else {
 			if (!(destination == '-' || destination == '|'))
 			{
+				if (hunger > 0) this->hunger--;
+				if (hunger <= 0) this->hitPoints--;
 				switch (dir)
 				{
 				case MOVE_UP:

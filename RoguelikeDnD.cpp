@@ -168,31 +168,32 @@ void makeExpMap()
 
 void initUI()
 {
-	// Floor [0 - 9] values [6 - 8]
-	// ui[0 - 9] = "Floor:999 "
-
-	// Hit Points (HP) [10 - 21] values [13 - 20]
-	// ui[10 - 21] = "HP:999(999) "
-
-	// Armor Class (AC) [22 - 27] values [25 - 26]
-	// ui[22 - 27] = "AC:99 "
-
-	// Attack Bonus (Atk) [28 - 35] values [32 - 34]
-	// ui[28 - 35] = "Atk:+99 "
-
-	// Damage Roll (Dmg) [36 - 45] values [40 - 44]
-	// ui[36 - 45] = "Dmg:99d20 "
-
-	// Gold [46 - 56] values [51 - 55]
-	// for this Roguelike Gold will be equivalent to Silver Pieces
-	// ui[46 - 56] = "Gold:99999 "
-
-	// Experience Points (Exp) [57 - 67] values [61 - 66]
-	// ui[57 - 67] = "Exp:999999 "
-
-	// Hunger [68 - 78] values [75 - 77]
-	// for this Rogue like having Hunger management increases the difficulty 
-	// ui[68 - 78] = "Hunger:999\n"
+	/* Floor [0 - 9] values [6 - 8]
+	 * ui[0 - 9] = "Floor:999 "
+	 *
+	 * Hit Points (HP) [10 - 21] values [13 - 20]
+	 * ui[10 - 21] = "HP:999(999) "
+	 *
+	 * Armor Class (AC) [22 - 27] values [25 - 26]
+	 * ui[22 - 27] = "AC:99 "
+	 *
+	 * Attack Bonus (Atk) [28 - 35] values [32 - 34]
+	 * ui[28 - 35] = "Atk:+99 "
+	 *
+	 * Damage Roll (Dmg) [36 - 45] values [40 - 44]
+	 * ui[36 - 45] = "Dmg:99d20 "
+	 *
+	 * Gold [46 - 56] values [51 - 55]
+	 * for this Roguelike Gold will be equivalent to Silver Pieces
+	 * ui[46 - 56] = "Gold:99999 "
+	 *
+	 * Experience Points (Exp) [57 - 67] values [61 - 66]
+	 * ui[57 - 67] = "Exp:999999 "
+	 *
+	 * Hunger [68 - 78] values [75 - 77]
+	 * for this Rogue like having Hunger management increases the difficulty 
+	 * ui[68 - 78] = "Hunger:999\n"
+	 */
 
 	uiStr = "Floor:999 HP:999(999) AC:99 Atk:+99 Dmg:99d99 Gold:99999 Exp:999999 Hunger:999\n";
 }
@@ -230,7 +231,7 @@ void updateUI()
 	str.resize(7);
 	uiStr.replace(61, 7, str);
 	// Hunger values [75 - 77]
-	str = std::to_string(player->hunger);
+	str = std::to_string(player->hunger/10);
 	str.resize(3);
 	uiStr.replace(75, 3, str);
 }
