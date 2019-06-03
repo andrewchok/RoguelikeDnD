@@ -62,5 +62,26 @@
     <ClInclude Include="Units.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
+    <ClInclude Include="Jackal.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Vulture.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Kobold.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Cultist.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Zombie.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Hobgoblin.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
