@@ -77,7 +77,7 @@ public:
 			return false;
 		}
 		else {
-			if (!(destination == '-' || destination == '|'))
+			if (!(destination == '-' || destination == '|' || destination == ' '))
 			{
 				if (hunger > 0) this->hunger--;
 				if (hunger <= 0) this->hitPoints--;

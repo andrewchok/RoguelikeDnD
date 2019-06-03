@@ -52,16 +52,8 @@ public:
 	std::vector<Coordinate> doorLocations;
 
 	GameMap() 
-	{ 
-		clearExpMap(); 
-		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-		{
-			for (int x = 0; x < GAME_WIDTH; x++)
-			{
-				map[x][y] = expMap[x][y];
-			}
-			map[GAME_WIDTH][y] = '\n';
-		}
+	{
+		Init();
 	};
 
 	~GameMap() {};
@@ -403,6 +395,54 @@ public:
 		}
 	}
 
+	bool isMapValid(int start_x, int start_y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int end_x, int end_y)
+	{
+		if ( expMap[start_x][start_y] == '.' || expMap[start_x][start_y] == '+' || expMap[start_x][start_y] == '#' )
+		{
+			if (start_x == end_x && start_y == end_y) return true;
+			if (start_x >= GAME_WIDTH - 1 || start_y >= GAME_MAP_HEIGHT - 1) return false;
+			if (start_x < 1 || start_y < 1) return false;
+			if (visited[start_x][start_y] == true) return false;
+		}
+		else return false;
+
+		visited[start_x][start_y] = true;
+
+		std::array<direction, 4> dir = { down, up, left, right };
+
+		for (auto n : dir)
+		{
+			switch (n)
+			{
+			case up:
+				if (isMapValid(start_x, start_y - 1, visited, end_x, end_y))
+				{
+					return true;
+				}
+				break;
+			case right:
+				if (isMapValid(start_x + 1, start_y, visited, end_x, end_y))
+				{
+					return true;
+				}
+				break;
+			case down:
+				if (isMapValid(start_x, start_y + 1, visited, end_x, end_y))
+				{
+					return true;
+				}
+				break;
+			case left:
+				if (isMapValid(start_x - 1, start_y, visited, end_x, end_y))
+				{
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
 	bool createCorridor(int x, int y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 10> dir, direction lastMove)
 	{
 		if (x != start_x || y != start_y)
@@ -482,58 +522,73 @@ public:
 
 	void createNewExpMap()
 	{
-		numberOfRooms = randomNumber(6, 9);
-		unsigned seed = 0;
-		random_shuffle(roomNumberList.begin(), roomNumberList.end());
-
-		for (int i = 0; i < numberOfRooms; i++)
+		while(true)
 		{
-			createRoom((RoomNumber)roomNumberList[i]); // to be moved to actual map and not explored map
-		}
+			Init();
+			roomList.clear();
+			numberOfRooms = randomNumber(6, 9);
+			unsigned seed = 0;
+			random_shuffle(roomNumberList.begin(), roomNumberList.end());
 
-		for (int i = 0; i < numberOfRooms; i++)
-		{
-			createDoor(roomList[i]); // to be moved to actual map and not explored map
-		}
-
-		for (int i = 0; i < numberOfRooms; i++)
-		{
-			for (auto d : roomList[i]->doorList)
+			for (int i = 0; i < numberOfRooms; i++)
 			{
-				bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
+				createRoom((RoomNumber)roomNumberList[i]); // to be moved to actual map and not explored map
+			}
 
-				std::array<direction, 10> dir;
-				switch (d.ori)
+			for (int i = 0; i < numberOfRooms; i++)
+			{
+				createDoor(roomList[i]); // to be moved to actual map and not explored map
+			}
+
+			for (int i = 0; i < numberOfRooms; i++)
+			{
+				for (auto d : roomList[i]->doorList)
 				{
-				case DOOR_TOP:
-					dir = { up, up, up, up, up, up, up, up, left, right };
-					break;
-				case DOOR_RIGHT:
-					dir = { right, right, right, right, right, right, right, right, up, down };
-					break;
-				case DOOR_BOTTOM:
-					dir = { down, down, down, down, down, down, down, down, left, right };
-					break;
-				case DOOR_LEFT:
-					dir = { left, left, left, left, left, left, left, left, up, down };
-					break;
+					bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
+
+					std::array<direction, 10> dir;
+					switch (d.ori)
+					{
+					case DOOR_TOP:
+						dir = { up, up, up, up, up, up, up, up, left, right };
+						break;
+					case DOOR_RIGHT:
+						dir = { right, right, right, right, right, right, right, right, up, down };
+						break;
+					case DOOR_BOTTOM:
+						dir = { down, down, down, down, down, down, down, down, left, right };
+						break;
+					case DOOR_LEFT:
+						dir = { left, left, left, left, left, left, left, left, up, down };
+						break;
+					}
+
+					random_shuffle(dir.begin(), dir.end());
+					direction lastMove = dir.front();
+
+					createCorridor(d.x_loc, d.y_loc, visited, d.x_loc, d.y_loc, dir, lastMove);
 				}
-
-				random_shuffle(dir.begin(), dir.end());
-				direction lastMove = dir.front();
-
-				createCorridor(d.x_loc, d.y_loc, visited, d.x_loc, d.y_loc, dir, lastMove);
 			}
-		}
 
-		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-		{
-			for (int x = 0; x < GAME_WIDTH; x++)
+			for (int y = 0; y < GAME_MAP_HEIGHT; y++)
 			{
-				map[x][y] = expMap[x][y];
+				for (int x = 0; x < GAME_WIDTH; x++)
+				{
+					map[x][y] = expMap[x][y];
+				}
+				map[GAME_WIDTH][y] = '\n';
 			}
-			map[GAME_WIDTH][y] = '\n';
-		}
+
+			bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
+
+			int start_x = randomNumber(roomList.front()->x_start + 1, roomList.front()->x_start + roomList.front()->x_size - 2);
+			int start_y = randomNumber(roomList.front()->y_start + 1, roomList.front()->y_start + roomList.front()->y_size - 2);
+
+			int end_x = randomNumber(roomList[2]->x_start + 1, roomList[2]->x_start + roomList[2]->x_size - 2);
+			int end_y = randomNumber(roomList[2]->y_start + 1, roomList[2]->y_start + roomList[2]->y_size - 2);
+
+			if (isMapValid(start_x, start_y, visited, end_x, end_y)) break;
+		} 
 	}
 
 	void refreshExpMap()
@@ -557,6 +612,19 @@ public:
 			{
 				mapStr += expMap[x][y];
 			}
+		}
+	}
+
+	void Init()
+	{
+		clearExpMap();
+		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
+		{
+			for (int x = 0; x < GAME_WIDTH; x++)
+			{
+				map[x][y] = expMap[x][y];
+			}
+			map[GAME_WIDTH][y] = '\n';
 		}
 	}
 };

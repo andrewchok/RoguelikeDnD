@@ -158,11 +158,13 @@
     <ClCompile Include="RoguelikeDnD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DeathScreen.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Fighter.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="EnemyCharacter.h" />
     <ClInclude Include="Goblin.h" />
+    <ClInclude Include="StartScreen.h" />
     <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="KeyStrokes.h" />
     <ClInclude Include="GameMap.h" />
