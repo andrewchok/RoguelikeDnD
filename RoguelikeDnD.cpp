@@ -34,6 +34,8 @@ GameMap* gameMap = new GameMap();
 PlayerInfo* ui = new PlayerInfo(player);
 
 // Method Declarations
+int randomNumber(int min, int max);
+
 void drawDeathScreen();
 
 void clearMessage();
@@ -51,6 +53,14 @@ void updateEnemy();
 
 
 // Method Definitions
+
+int randomNumber(int min, int max)
+{
+	srand(unsigned(time(NULL) * 11 * rand()));
+	int value = (rand() % (max - min + 1)) + min;
+	return value;
+}
+
 void drawDeathScreen()
 {
 	std::cout <<
@@ -169,9 +179,14 @@ bool placePlayer()
 {
 	// choose random room
 	// place randomly in that room but not on top of any items
+	int x_start = gameMap->roomList.front()->x_start;
+	int y_start = gameMap->roomList.front()->y_start;
 
-	int x_pos = 3;
-	int y_pos = 3;
+	int x_size = gameMap->roomList.front()->x_size;
+	int y_size = gameMap->roomList.front()->y_size;
+
+	int x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+	int y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
 		
 	if (player->setLocation(x_pos, y_pos))
 	{
