@@ -34,6 +34,7 @@ Equipment:
 #include <time.h>
 #include "Character.h"
 #include "Enums.h"
+#include <queue>
 
 
 class PlayerCharacter : public Character
@@ -52,13 +53,16 @@ public:
 	std::string dndClass = "";
 	std::string Equipment = "";
 	std::string dmgRoll = "";
-	int restDiceCount = 1;
+	int restDiceMaxCount = 1;
+	int restDiceCurrentCount = 1;
 	int restDiceType = 10;
 
 	int floor = 1;
 	int gold = 0;
 	int exp = 0;
 	int hunger = 1000;
+
+	std::queue<int> levelAdvancement = {};
 
 	// ============================
 	// ========= METHODS ==========
@@ -70,6 +74,10 @@ public:
 	virtual int crit() = 0;
 	virtual int attack() = 0;
 	virtual int damage() = 0;
+	virtual void shortRest() = 0;
+	virtual void longRest() = 0;
+	virtual void showAbilities() = 0;
+	virtual void levelUp() = 0;
 	bool movePlayer(Direction dir, char destination)
 	{
 		if (destination == 'G')

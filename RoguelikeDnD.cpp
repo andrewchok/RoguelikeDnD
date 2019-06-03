@@ -152,6 +152,7 @@ bool placePlayer()
 void updatePlayer()
 {
 	gameMap->expMap[player->x_pos][player->y_pos] = '@';
+	player->levelUp();
 }
 
 bool placeStairs()

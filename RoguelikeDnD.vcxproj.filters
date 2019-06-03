@@ -83,5 +83,14 @@
     <ClInclude Include="Hobgoblin.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
+    <ClInclude Include="Orc.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Thug.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Bugbear.h">
+      <Filter>Header Files\characters</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -158,6 +158,7 @@
     <ClCompile Include="RoguelikeDnD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bugbear.h" />
     <ClInclude Include="Cultist.h" />
     <ClInclude Include="DeathScreen.h" />
     <ClInclude Include="Enums.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="EnemyCharacter.h" />
     <ClInclude Include="Goblin.h" />
     <ClInclude Include="Hobgoblin.h" />
+    <ClInclude Include="Orc.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="Jackal.h" />
     <ClInclude Include="Kobold.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="Thug.h" />
     <ClInclude Include="Units.h" />
     <ClInclude Include="Vulture.h" />
     <ClInclude Include="Zombie.h" />
