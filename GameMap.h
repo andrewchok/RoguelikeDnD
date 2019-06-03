@@ -26,17 +26,11 @@ class GameMap
 public:
 	// Global Variables
 	// GAME_WIDTH + 1 (for \n)
-	int input = -1;
 	char map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
 	char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored
 	std::string mapStr = "";
-	std::string gameStr = "";
 	char destination = ' ';
 	bool newLvl = true;
-
-	// new variables
-	int enemyCount = 5;
-	//char enemy[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int numberOfRooms = 0;
@@ -57,7 +51,19 @@ public:
 
 	std::vector<Coordinate> doorLocations;
 
-	GameMap() { clearExpMap(); };
+	GameMap() 
+	{ 
+		clearExpMap(); 
+		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
+		{
+			for (int x = 0; x < GAME_WIDTH; x++)
+			{
+				map[x][y] = expMap[x][y];
+			}
+			map[GAME_WIDTH][y] = '\n';
+		}
+	};
+
 	~GameMap() {};
 
 	int randomNumber(int min, int max)
@@ -325,13 +331,13 @@ public:
 			break;
 		}
 
-		unsigned seed = 0;
-		random_shuffle(door.begin(), door.end());
+		//unsigned seed = 0;
+		//random_shuffle(door.begin(), door.end());
 
-		for (int i = randomNumber(0, maxDoors - 1); i > 0; i--)
-		{
-			door.pop_back();
-		}
+		//for (int i = randomNumber(0, maxDoors - 1); i > 0; i--)
+		//{
+		//	door.pop_back();
+		//}
 
 		for (auto n : door)
 		{
@@ -385,8 +391,6 @@ public:
 		}
 	}
 
-
-
 	void clearExpMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -399,7 +403,7 @@ public:
 		}
 	}
 
-	bool createCorridor(int x, int y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 4> dir/*, std::vector<Coordinate> doorLocations*/)
+	bool createCorridor(int x, int y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 10> dir, direction lastMove)
 	{
 		if (x != start_x || y != start_y)
 		{
@@ -412,48 +416,66 @@ public:
 			//	}
 
 			//}
-			if (x >= GAME_WIDTH || y >= GAME_MAP_HEIGHT) return false;
-			if (x < 0 || y < 0) return false;
+			if (x >= GAME_WIDTH - 1 || y >= GAME_MAP_HEIGHT - 1) return false;
+			if (x < 1 || y < 1) return false;
 			if (visited[x][y] == true) return false;
 			if (expMap[x][y] != ' ') return false;
 
 			visited[x][y] = true;
 		}
 
+		switch (lastMove)
+		{
+		case DOOR_TOP:
+			dir = { up, up, up, up, up, up, up, up, left, right };
+			break;
+		case DOOR_RIGHT:
+			dir = { right, right, right, right, right, right, right, right, up, down };
+			break;
+		case DOOR_BOTTOM:
+			dir = { down, down, down, down, down, down, down, down, left, right };
+			break;
+		case DOOR_LEFT:
+			dir = { left, left, left, left, left, left, left, left, up, down };
+			break;
+		}
+
+		random_shuffle(dir.begin(), dir.end());
+		lastMove = dir.front();
+
 		for (auto n : dir)
 		{
 			switch (n)
 			{
 			case up:
-				if (createCorridor(x, y - 1, visited, start_x, start_y, dir))
+				if (createCorridor(x, y - 1, visited, start_x, start_y, dir, up))
 				{
 					if (expMap[x][y] == ' ') expMap[x][y] = '#';
 					return true;
 				}
 				break;
 			case right:
-				if (createCorridor(x + 1, y, visited, start_x, start_y, dir))
+				if (createCorridor(x + 1, y, visited, start_x, start_y, dir, right))
 				{
 					if (expMap[x][y] == ' ') expMap[x][y] = '#';
 					return true;
 				}
 				break;
 			case down:
-				if (createCorridor(x, y + 1, visited, start_x, start_y, dir))
+				if (createCorridor(x, y + 1, visited, start_x, start_y, dir, down))
 				{
 					if (expMap[x][y] == ' ') expMap[x][y] = '#';
 					return true;
 				}
 				break;
 			case left:
-				if (createCorridor(x - 1, y, visited, start_x, start_y, dir))
+				if (createCorridor(x - 1, y, visited, start_x, start_y, dir, left))
 				{
 					if (expMap[x][y] == ' ') expMap[x][y] = '#';
 					return true;
 				}
 				break;
 			}
-
 		}
 		return false;
 	}
@@ -480,10 +502,27 @@ public:
 			{
 				bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
 
-				//if()
-				std::array<direction, 4> dir = { up, down, left, right };
+				std::array<direction, 10> dir;
+				switch (d.ori)
+				{
+				case DOOR_TOP:
+					dir = { up, up, up, up, up, up, up, up, left, right };
+					break;
+				case DOOR_RIGHT:
+					dir = { right, right, right, right, right, right, right, right, up, down };
+					break;
+				case DOOR_BOTTOM:
+					dir = { down, down, down, down, down, down, down, down, left, right };
+					break;
+				case DOOR_LEFT:
+					dir = { left, left, left, left, left, left, left, left, up, down };
+					break;
+				}
 
-				//createCorridor(start.x, start.y, visited, start.x, start.y, dir/*, doorLocations*/);
+				random_shuffle(dir.begin(), dir.end());
+				direction lastMove = dir.front();
+
+				createCorridor(d.x_loc, d.y_loc, visited, d.x_loc, d.y_loc, dir, lastMove);
 			}
 		}
 

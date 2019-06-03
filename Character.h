@@ -55,7 +55,7 @@ public:
 	int roll(int num, int value)
 	{
 		int result = 0;
-		srand(time(NULL) * 13 * rand());
+		srand( unsigned(time(NULL) * 13 * rand()) );
 
 		for (int i = 0; i < num; i++)
 		{
@@ -68,7 +68,7 @@ public:
 	{
 		int result = 0;
 
-		srand(time(NULL) * 7 * rand());
+		srand(unsigned(time(NULL) * 7 * rand()) );
 		result += rand() % 20 + 1;
 
 		if (result == 20) return NAT_20; // nat 20

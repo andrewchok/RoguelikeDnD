@@ -7,15 +7,14 @@
 #include "Units.h"
 #include "Enums.h"
 #include "GameMap.h"
+#include "PlayerInfo.h"
 
 // Global Variables
 // GAME_WIDTH + 1 (for \n)
 int input = -1;
-char message[GAME_WIDTH + 1] = { 0 };
 char specialMsg[GAME_WIDTH + 1] = { 0 };
 std::string messageStr = "";
 std::string mapStr = "";
-std::string uiStr = "";
 std::string specialMsgStr = "";
 std::string gameStr = "";
 char destination = ' ';
@@ -32,6 +31,7 @@ PlayerCharacter* player = new Fighter();
 EnemyCharacter* enemy[10] = { 0 };
 
 GameMap* gameMap = new GameMap();
+PlayerInfo* ui = new PlayerInfo(player);
 
 // Method Declarations
 void drawDeathScreen();
@@ -40,10 +40,7 @@ void clearMessage();
 void updateMessage();
 
 bool spawnEnemy();
-void makeExpMap();
 
-void initUI();
-void updateUI();
 void updateSpecialMsg();
 
 void drawGame();
@@ -154,88 +151,6 @@ bool spawnEnemy()
 	return false;
 }
 
-void makeExpMap()
-{
-	mapStr = "";
-	for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-	{
-		for (int x = 0; x < GAME_WIDTH + 1; x++)
-		{
-			mapStr += gameMap->expMap[x][y];
-		}
-	}
-}
-
-void initUI()
-{
-	/* Floor [0 - 9] values [6 - 8]
-	 * ui[0 - 9] = "Floor:999 "
-	 *
-	 * Hit Points (HP) [10 - 21] values [13 - 20]
-	 * ui[10 - 21] = "HP:999(999) "
-	 *
-	 * Armor Class (AC) [22 - 27] values [25 - 26]
-	 * ui[22 - 27] = "AC:99 "
-	 *
-	 * Attack Bonus (Atk) [28 - 35] values [32 - 34]
-	 * ui[28 - 35] = "Atk:+99 "
-	 *
-	 * Damage Roll (Dmg) [36 - 45] values [40 - 44]
-	 * ui[36 - 45] = "Dmg:99d20 "
-	 *
-	 * Gold [46 - 56] values [51 - 55]
-	 * for this Roguelike Gold will be equivalent to Silver Pieces
-	 * ui[46 - 56] = "Gold:99999 "
-	 *
-	 * Experience Points (Exp) [57 - 67] values [61 - 66]
-	 * ui[57 - 67] = "Exp:999999 "
-	 *
-	 * Hunger [68 - 78] values [75 - 77]
-	 * for this Rogue like having Hunger management increases the difficulty 
-	 * ui[68 - 78] = "Hunger:999\n"
-	 */
-
-	uiStr = "Floor:999 HP:999(999) AC:99 Atk:+99 Dmg:99d99 Gold:99999 Exp:999999 Hunger:999\n";
-}
-
-void updateUI()
-{
-	std::string str = "";
-	// Floor [6 - 8]
-	str = std::to_string(player->floor);
-	str.resize(4);
-	uiStr.replace(6, 4, str);
-	// Hit Points (HP) values [13 - 20]
-	str = std::to_string(player->hitPoints) + "(" + std::to_string(player->maxHitPoints) + ")";
-	str.resize(8);
-	uiStr.replace(13, 8, str);
-	// Armor Class (AC) values [25 - 26]
-	if(player->hasShield) str = std::to_string(player->armorClass + 2);
-	else str = std::to_string(player->armorClass);
-	str.resize(3);
-	uiStr.replace(25, 3, str);
-	// Attack Bonus (Atk) values [32 - 34]
-	str = "+" + std::to_string(player->proficiencyBonus + player->modSTR);
-	str.resize(4);
-	uiStr.replace(32, 4, str);
-	// Damage Roll (Dmg) values [40 - 44]
-	str = player->dmgRoll;
-	str.resize(6);
-	uiStr.replace(40, 6, str);
-	// Gold values [51 - 55]
-	str = std::to_string(player->gold);
-	str.resize(6);
-	uiStr.replace(51, 6, str);
-	// Experience Points (Exp) values [61 - 66]
-	str = std::to_string(player->exp);
-	str.resize(7);
-	uiStr.replace(61, 7, str);
-	// Hunger values [75 - 77]
-	str = std::to_string(player->hunger/10);
-	str.resize(3);
-	uiStr.replace(75, 3, str);
-}
-
 void updateSpecialMsg()
 {
 	// write code to show special msg
@@ -246,7 +161,7 @@ void updateSpecialMsg()
 void drawGame()
 {
 	gameStr = "";
-	gameStr = messageStr + mapStr + uiStr + specialMsgStr;
+	gameStr = messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
 	std::cout << gameStr;
 }
 
@@ -280,6 +195,7 @@ void updateEnemy()
 		if (enemy[0]->hitPoints > 0) gameMap->expMap[enemy[0]->x_pos][enemy[0]->y_pos] = 'G';
 		else
 		{
+			player->exp += enemy[0]->expReward;
 			delete enemy[0];
 			enemy[0] = nullptr;
 		}
@@ -292,7 +208,6 @@ void updateEnemy()
 int main()
 {
 	clearMessage();
-	initUI();
 	spawnEnemy();
 
 	while (true)
@@ -315,8 +230,8 @@ int main()
 		else updatePlayer();
 		updateEnemy();
 
-		makeExpMap();
-		updateUI();
+		gameMap->makeExpMap();
+		ui->updateUI();
 		updateSpecialMsg();
 		
 
