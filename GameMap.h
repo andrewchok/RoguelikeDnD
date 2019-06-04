@@ -509,14 +509,14 @@ public:
 
 	void exploreSurrounding(int start_x, int start_y)
 	{
-		isExplored[start_x + 1][start_y + 1]	= checkSurrounding(map[start_x + 1][start_y + 1]);
-		isExplored[start_x + 1][start_y]		= checkSurrounding(map[start_x + 1][start_y]) || map[start_x + 1][start_y] == '.';
-		isExplored[start_x + 1][start_y - 1]	= checkSurrounding(map[start_x + 1][start_y - 1]);
-		isExplored[start_x][start_y + 1]		= checkSurrounding(map[start_x][start_y + 1]) || map[start_x][start_y + 1] == '.';
-		isExplored[start_x][start_y - 1]		= checkSurrounding(map[start_x][start_y - 1]) || map[start_x][start_y - 1] == '.';
-		isExplored[start_x - 1][start_y + 1]	= checkSurrounding(map[start_x - 1][start_y + 1]);
-		isExplored[start_x - 1][start_y]		= checkSurrounding(map[start_x - 1][start_y]) || map[start_x - 1][start_y] == '.';
-		isExplored[start_x - 1][start_y - 1]	= checkSurrounding(map[start_x - 1][start_y - 1]);
+		isExplored[start_x + 1][start_y + 1] ? true : isExplored[start_x + 1][start_y + 1] = checkSurrounding(map[start_x + 1][start_y + 1]);
+		isExplored[start_x + 1][start_y] ? true : isExplored[start_x + 1][start_y] = checkSurrounding(map[start_x + 1][start_y]) || map[start_x + 1][start_y] == '.';
+		isExplored[start_x + 1][start_y - 1] ? true : isExplored[start_x + 1][start_y - 1] = checkSurrounding(map[start_x + 1][start_y - 1]);
+		isExplored[start_x][start_y + 1] ? true : isExplored[start_x][start_y + 1] = checkSurrounding(map[start_x][start_y + 1]) || map[start_x][start_y + 1] == '.';
+		isExplored[start_x][start_y - 1] ? true : isExplored[start_x][start_y - 1] = checkSurrounding(map[start_x][start_y - 1]) || map[start_x][start_y - 1] == '.';
+		isExplored[start_x - 1][start_y + 1] ? true : isExplored[start_x - 1][start_y + 1] = checkSurrounding(map[start_x - 1][start_y + 1]);
+		isExplored[start_x - 1][start_y] ? true : isExplored[start_x - 1][start_y] = checkSurrounding(map[start_x - 1][start_y]) || map[start_x - 1][start_y] == '.';
+		isExplored[start_x - 1][start_y - 1] ? true : isExplored[start_x - 1][start_y - 1] = checkSurrounding(map[start_x - 1][start_y - 1]);
 	}
 
 	void explore(int player_x, int player_y)

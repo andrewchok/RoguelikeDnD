@@ -112,9 +112,7 @@ void fightMessage( int unitNum)
 		}
 		else messageStr += "missed! ";
 
-
 	}
-
 
 	messageStr += "\n";
 }
