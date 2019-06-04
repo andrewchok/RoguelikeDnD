@@ -27,6 +27,7 @@ public:
 	// Global Variables
 	// GAME_WIDTH + 1 (for \n)
 	char map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
+	bool isExplored[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
 	char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored
 	std::string mapStr = "";
 	char destination = ' ';
@@ -71,30 +72,29 @@ public:
 		{
 			for (int x = room->x_start; x < (room->x_start + room->x_size) && y == room->y_start; x++)
 			{
-				expMap[x][y] = '-';
+				map[x][y] = '-';
 			}
 
 			for (int x = room->x_start; x < (room->x_start + room->x_size) && y > room->y_start && y < (room->y_start + room->y_size - 1); x++)
 			{
 				if (x == room->x_start || x == (room->x_start + room->x_size - 1))
 				{
-					expMap[x][y] = '|';
+					map[x][y] = '|';
 				}
 				else
 				{
-					expMap[x][y] = '.';
+					map[x][y] = '.';
 				}
 
 			}
 
 			for (int x = room->x_start; x < (room->x_start + room->x_size) && y == (room->y_start + room->y_size - 1); x++)
 			{
-				expMap[x][y] = '-';
+				map[x][y] = '-';
 			}
 		}
 		return true;
 	}
-
 
 	bool createRoom(RoomNumber room)
 	{
@@ -195,7 +195,7 @@ public:
 				if (room->hasTopDoor) break;
 				x = randomNumber(room->x_start + 1, room->x_start + room->x_size - 2);
 				y = room->y_start;
-				expMap[x][y] = '+';
+				map[x][y] = '+';
 				coord.x = x;
 				coord.y = y;
 				doorLocations.push_back(coord);
@@ -205,7 +205,7 @@ public:
 				if (room->hasRightDoor) break;
 				x = room->x_start + room->x_size - 1;
 				y = randomNumber(room->y_start + 1, room->y_start + room->y_size - 2);
-				expMap[x][y] = '+';
+				map[x][y] = '+';
 				coord.x = x;
 				coord.y = y;
 				doorLocations.push_back(coord);
@@ -215,7 +215,7 @@ public:
 				if (room->hasBottomDoor) break;
 				x = randomNumber(room->x_start + 1, room->x_start + room->x_size - 2);
 				y = room->y_start + room->y_size - 1;
-				expMap[x][y] = '+';
+				map[x][y] = '+';
 				coord.x = x;
 				coord.y = y;
 				doorLocations.push_back(coord);
@@ -225,7 +225,7 @@ public:
 				if (room->hasLeftDoor) break;
 				x = room->x_start;
 				y = randomNumber(room->y_start + 1, room->y_start + room->y_size - 2);
-				expMap[x][y] = '+';
+				map[x][y] = '+';
 				coord.x = x;
 				coord.y = y;
 				doorLocations.push_back(coord);
@@ -235,21 +235,21 @@ public:
 		}
 	}
 
-	void clearExpMap()
+	void clearMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
 		{
 			for (int x = 0; x < GAME_WIDTH; x++)
 			{
-				expMap[x][y] = ' ';
+				map[x][y] = ' ';
 			}
-			expMap[GAME_WIDTH][y] = '\n';
+			map[GAME_WIDTH][y] = '\n';
 		}
 	}
 
 	bool isMapValid(int start_x, int start_y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int end_x, int end_y)
 	{
-		if ( expMap[start_x][start_y] == '.' || expMap[start_x][start_y] == '+' || expMap[start_x][start_y] == '#' )
+		if (map[start_x][start_y] == '.' || map[start_x][start_y] == '+' || map[start_x][start_y] == '#' )
 		{
 			if (start_x == end_x && start_y == end_y) return true;
 			if (start_x >= GAME_WIDTH - 1 || start_y >= GAME_MAP_HEIGHT - 1) return false;
@@ -299,8 +299,8 @@ public:
 	{
 		if (x != start_x || y != start_y)
 		{
-			if (expMap[x][y] == '#') return true;
-			if (expMap[x][y] == '+') return true;
+			if (map[x][y] == '#') return true;
+			if (map[x][y] == '+') return true;
 			//{
 			//	for (auto coord : doorLocations)
 			//	{
@@ -311,7 +311,7 @@ public:
 			if (x >= GAME_WIDTH - 1 || y >= GAME_MAP_HEIGHT - 1) return false;
 			if (x < 1 || y < 1) return false;
 			if (visited[x][y] == true) return false;
-			if (expMap[x][y] != ' ') return false;
+			if (map[x][y] != ' ') return false;
 
 			visited[x][y] = true;
 		}
@@ -342,28 +342,28 @@ public:
 			case up:
 				if (createCorridor(x, y - 1, visited, start_x, start_y, dir, up))
 				{
-					if (expMap[x][y] == ' ') expMap[x][y] = '#';
+					if (map[x][y] == ' ') map[x][y] = '#';
 					return true;
 				}
 				break;
 			case right:
 				if (createCorridor(x + 1, y, visited, start_x, start_y, dir, right))
 				{
-					if (expMap[x][y] == ' ') expMap[x][y] = '#';
+					if (map[x][y] == ' ') map[x][y] = '#';
 					return true;
 				}
 				break;
 			case down:
 				if (createCorridor(x, y + 1, visited, start_x, start_y, dir, down))
 				{
-					if (expMap[x][y] == ' ') expMap[x][y] = '#';
+					if (map[x][y] == ' ') map[x][y] = '#';
 					return true;
 				}
 				break;
 			case left:
 				if (createCorridor(x - 1, y, visited, start_x, start_y, dir, left))
 				{
-					if (expMap[x][y] == ' ') expMap[x][y] = '#';
+					if (map[x][y] == ' ') map[x][y] = '#';
 					return true;
 				}
 				break;
@@ -372,7 +372,7 @@ public:
 		return false;
 	}
 
-	void createNewExpMap()
+	void createNewMap()
 	{
 		while(true)
 		{
@@ -422,15 +422,6 @@ public:
 				}
 			}
 
-			for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-			{
-				for (int x = 0; x < GAME_WIDTH; x++)
-				{
-					map[x][y] = expMap[x][y];
-				}
-				map[GAME_WIDTH][y] = '\n';
-			}
-
 			bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
 
 			int start_x = randomNumber(roomList.front()->x_start + 1, roomList.front()->x_start + roomList.front()->x_size - 2);
@@ -443,13 +434,31 @@ public:
 		} 
 	}
 
+	void refreshMap()
+	{
+		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
+		{
+			for (int x = 0; x < GAME_WIDTH; x++)
+			{
+				if (isExplored[x][y])
+				{
+					expMap[x][y] = map[x][y];
+				}
+			}
+			expMap[GAME_WIDTH][y] = '\n';
+		}
+	}
+
 	void refreshExpMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
 		{
 			for (int x = 0; x < GAME_WIDTH; x++)
 			{
-				expMap[x][y] = map[x][y];
+				if (isExplored[x][y]) 
+				{
+					expMap[x][y] = map[x][y];
+				}
 			}
 			expMap[GAME_WIDTH][y] = '\n';
 		}
@@ -467,16 +476,79 @@ public:
 		}
 	}
 
+	void exploreRoom(int start_x, int start_y)
+	{
+		if (start_x >= GAME_WIDTH || start_y >= GAME_MAP_HEIGHT) return;
+		if (start_x < 0 || start_y < 0) return;
+		if (isExplored[start_x][start_y] == true) return;	
+		if (map[start_x][start_y] == ' ' || map[start_x][start_y] == '#') return;
+
+		isExplored[start_x][start_y] = true;
+
+		if (map[start_x][start_y] == '-') return;
+
+		exploreRoom(start_x+1, start_y);
+		exploreRoom(start_x-1, start_y);
+		exploreRoom(start_x, start_y+1);
+		exploreRoom(start_x, start_y-1);
+		exploreRoom(start_x + 1, start_y + 1);
+		exploreRoom(start_x - 1, start_y + 1);
+		exploreRoom(start_x + 1, start_y - 1);
+		exploreRoom(start_x - 1, start_y - 1);
+	}
+
+	bool checkSurrounding(char surr)
+	{
+		if (surr == '#' || surr == '+' || surr == '-' || surr == '|' || surr == '.') return true;
+		else return false;
+	}
+
+	void exploreSurrounding(int start_x, int start_y)
+	{
+		isExplored[start_x + 1][start_y + 1]	= checkSurrounding(map[start_x + 1][start_y + 1]);
+		isExplored[start_x + 1][start_y]		= checkSurrounding(map[start_x + 1][start_y]);
+		isExplored[start_x + 1][start_y - 1]	= checkSurrounding(map[start_x + 1][start_y - 1]);
+		isExplored[start_x][start_y + 1]		= checkSurrounding(map[start_x][start_y + 1]);
+		isExplored[start_x][start_y - 1]		= checkSurrounding(map[start_x][start_y - 1]);
+		isExplored[start_x - 1][start_y + 1]	= checkSurrounding(map[start_x - 1][start_y + 1]);
+		isExplored[start_x - 1][start_y]		= checkSurrounding(map[start_x - 1][start_y]);
+		isExplored[start_x - 1][start_y - 1]	= checkSurrounding(map[start_x - 1][start_y - 1]);
+	}
+
+	void explore(int player_x, int player_y)
+	{
+		if (map[player_x][player_y] == '.' || map[player_x][player_y] == '%')
+		{
+			exploreRoom(player_x + 1, player_y);
+			exploreRoom(player_x - 1, player_y);
+			exploreRoom(player_x, player_y + 1);
+			exploreRoom(player_x, player_y - 1);
+		}
+
+		if (map[player_x][player_y] == '#' || map[player_x][player_y] == '+')
+		{
+			exploreSurrounding(player_x, player_y);
+		}
+	}
+
+	void revealMapTile(int x, int y)
+	{
+		expMap[x][y] = map[x][y];
+		isExplored[x][y] = true;
+	}
+
 	void Init()
 	{
-		clearExpMap();
+		clearMap();
+		
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
 		{
 			for (int x = 0; x < GAME_WIDTH; x++)
 			{
-				map[x][y] = expMap[x][y];
+				expMap[x][y] = map[x][y];
+				isExplored[x][y] = false;
 			}
-			map[GAME_WIDTH][y] = '\n';
+			expMap[GAME_WIDTH][y] = '\n';
 		}
 	}
 };

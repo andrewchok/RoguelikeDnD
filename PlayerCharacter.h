@@ -78,9 +78,30 @@ public:
 	virtual void longRest() = 0;
 	virtual void showAbilities() = 0;
 	virtual void levelUp() = 0;
-	bool movePlayer(Direction dir, char destination)
+
+	bool fightCheck(char destination)
 	{
-		if (destination == 'G')
+		if (destination == 'J') return true;
+		if (destination == 'V') return true;
+		if (destination == 'K') return true;
+		if (destination == 'C') return true;
+		if (destination == 'G') return true;
+		if (destination == 'S') return true;
+		if (destination == 'Z') return true;
+		if (destination == 'H') return true;
+		if (destination == 'O') return true;
+		if (destination == 'T') return true;
+		if (destination == 'B') return true;
+		if (destination == 'M') return true;
+		if (destination == 'N') return true;
+		if (destination == 'W') return true;
+
+		return false;
+	}
+
+	bool movePlayer(Direction dir, char destination) 
+	{
+		if (fightCheck(destination))
 		{
 			return false;
 		}

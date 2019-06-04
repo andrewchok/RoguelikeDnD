@@ -168,9 +168,9 @@ bool placeStairs()
 	int x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
 	int y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
 
-	if (gameMap->expMap[x_pos][y_pos] == '.')
+	if (gameMap->map[x_pos][y_pos] == '.')
 	{
-		gameMap->expMap[x_pos][y_pos] = '%';
+		gameMap->map[x_pos][y_pos] = '%';
 		stairs_loc = { x_pos, y_pos };
 		return true;
 	}
@@ -180,7 +180,7 @@ bool placeStairs()
 
 void updateStairs()
 {
-	gameMap->expMap[stairs_loc[0]][stairs_loc[1]] = '%';
+	gameMap->map[stairs_loc[0]][stairs_loc[1]] = '%';
 }
 
 bool spawnEnemy()
@@ -195,7 +195,7 @@ bool spawnEnemy()
 
 	//for (int i = 0; i < enemyCount; i++)
 	//{
-	//	expMap[x_pos][y_pos] = 'G';//enemy[i];
+	//	map[x_pos][y_pos] = 'G';//enemy[i];
 	//}
 	enemy[0] = new Goblin();
 
@@ -244,23 +244,28 @@ int main()
 				deathScreen->drawDeathScreen();
 				break;
 			}
-
-			gameMap->refreshExpMap();
 			
 			if (newLvl)
 			{
-				gameMap->createNewExpMap();
-				spawnEnemy();
+				gameMap->createNewMap();
 				placeStairs();
 				placePlayer();
+				gameMap->explore(player->x_pos, player->y_pos);
+				gameMap->refreshExpMap();
+
+				updatePlayer();
+				spawnEnemy();
 				newLvl = false;
 			}
 			else
 			{
-				updateStairs();
+				gameMap->explore(player->x_pos, player->y_pos);
+				gameMap->refreshExpMap();
+				//updateStairs();
 				updatePlayer();
 			}
 			updateEnemy();
+
 
 			gameMap->makeExpMap();
 			ui->updateUI();
@@ -291,23 +296,19 @@ int main()
 				switch (input)
 				{
 				case KEY_ARROW_UP:
-					//if (expMap[player->x_pos][player->y_pos - 1] != '-') player->y_pos--;
-					destination = gameMap->expMap[player->x_pos][player->y_pos - 1];
+					destination = gameMap->map[player->x_pos][player->y_pos - 1];
 					isFighting = !player->movePlayer(MOVE_UP, destination);
 					break;
 				case KEY_ARROW_DOWN:
-					//if (expMap[player->x_pos][player->y_pos + 1] != '-') player->y_pos++;
-					destination = gameMap->expMap[player->x_pos][player->y_pos + 1];
+					destination = gameMap->map[player->x_pos][player->y_pos + 1];
 					isFighting = !player->movePlayer(MOVE_DOWN, destination);
 					break;
 				case KEY_ARROW_LEFT:
-					//if (expMap[player->x_pos - 1][player->y_pos] != '|') player->x_pos--;
-					destination = gameMap->expMap[player->x_pos - 1][player->y_pos];
+					destination = gameMap->map[player->x_pos - 1][player->y_pos];
 					isFighting = !player->movePlayer(MOVE_LEFT, destination);
 					break;
 				case KEY_ARROW_RIGHT:
-					//if (expMap[player->x_pos + 1][player->y_pos] != '|') player->x_pos++;
-					destination = gameMap->expMap[player->x_pos + 1][player->y_pos];
+					destination = gameMap->map[player->x_pos + 1][player->y_pos];
 					isFighting = !player->movePlayer(MOVE_RIGHT, destination);
 					break;
 				}
