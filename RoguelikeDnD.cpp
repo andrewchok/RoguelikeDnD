@@ -234,6 +234,7 @@ int main()
 		startScreen->drawStartScreen();
 		if (startScreen->playerName == "quit") break;
 		player->name = startScreen->playerName;
+		newLvl = true;
 
 		clearMessage();
 
@@ -296,19 +297,19 @@ int main()
 				switch (input)
 				{
 				case KEY_ARROW_UP:
-					destination = gameMap->map[player->x_pos][player->y_pos - 1];
+					destination = gameMap->expMap[player->x_pos][player->y_pos - 1];
 					isFighting = !player->movePlayer(MOVE_UP, destination);
 					break;
 				case KEY_ARROW_DOWN:
-					destination = gameMap->map[player->x_pos][player->y_pos + 1];
+					destination = gameMap->expMap[player->x_pos][player->y_pos + 1];
 					isFighting = !player->movePlayer(MOVE_DOWN, destination);
 					break;
 				case KEY_ARROW_LEFT:
-					destination = gameMap->map[player->x_pos - 1][player->y_pos];
+					destination = gameMap->expMap[player->x_pos - 1][player->y_pos];
 					isFighting = !player->movePlayer(MOVE_LEFT, destination);
 					break;
 				case KEY_ARROW_RIGHT:
-					destination = gameMap->map[player->x_pos + 1][player->y_pos];
+					destination = gameMap->expMap[player->x_pos + 1][player->y_pos];
 					isFighting = !player->movePlayer(MOVE_RIGHT, destination);
 					break;
 				}
@@ -374,6 +375,7 @@ int main()
 				{
 					newLvl = true;
 					player->floor++;
+					player->exp += 100;
 				}
 			}
 		}
