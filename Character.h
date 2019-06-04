@@ -3,6 +3,7 @@
 #define CHARACTER
 #include <string>
 #include <time.h>
+#include "GameMap.h"
 
 #define NAT_20 99
 #define NAT_1 -99

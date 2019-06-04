@@ -19,7 +19,13 @@ std::string messageStr = "";
 std::string mapStr = "";
 std::string specialMsgStr = "";
 std::string gameStr = "";
-char destination = ' ';
+struct Destination
+{
+	char token;
+	int x, y;
+};
+
+Destination destination;
 bool isFighting = false;
 int playerHitRoll = 0;
 int enemyHitRoll[10] = { 0 };
@@ -28,23 +34,24 @@ bool wasEnemyHit = false;
 int dmgDealtToPlayer = 0;
 int dmgDealtToEnemy = 0;
 bool newLvl = true;
+int spawnEnemies = 0;
 
 std::array<int, 2> stairs_loc = { 0, 0 };
 
 StartScreen* startScreen = new StartScreen();
 DeathScreen* deathScreen = new DeathScreen();
 
-PlayerCharacter* player = new Fighter();
+PlayerCharacter* player;
 EnemyCharacter* enemy[10] = { 0 };
 
 GameMap* gameMap = new GameMap();
-PlayerInfo* ui = new PlayerInfo(player);
+PlayerInfo* ui;
 
 // Method Declarations
 int randomNumber(int min, int max);
 
 void clearMessage();
-void updateMessage();
+void fightMessage();
 
 void updateSpecialMsg();
 
@@ -56,7 +63,7 @@ void updatePlayer();
 bool placeStairs();
 void updateStairs();
 
-bool spawnEnemy();
+void spawnEnemy();
 void updateEnemy();
 
 
@@ -74,7 +81,7 @@ void clearMessage()
 	messageStr = "\n";
 }
 
-void updateMessage()
+void fightMessage( int unitNum)
 {
 	// clear existing message and make message here 
 	
@@ -91,14 +98,14 @@ void updateMessage()
 			if (playerHitRoll == NAT_20) messageStr += "crit ";
 			else messageStr += "hit ";
 			
-			messageStr += enemy[0]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
+			messageStr += enemy[unitNum]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
 		}
 		else messageStr += "missed! ";
 
-		messageStr += enemy[0]->name + " swung and ";
+		messageStr += enemy[unitNum]->name + " swung and ";
 		if (wasPlayerHit)
 		{
-			if (enemyHitRoll[0] == NAT_20) messageStr += "crit ";
+			if (enemyHitRoll[unitNum] == NAT_20) messageStr += "crit ";
 			else messageStr += "hit ";
 
 			messageStr += "you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
@@ -183,47 +190,87 @@ void updateStairs()
 	gameMap->map[stairs_loc[0]][stairs_loc[1]] = '%';
 }
 
-bool spawnEnemy()
+void spawnEnemy()
 {
 	// randomly check for how many enemies to spawn based on floor
 	// spawn said enemy
 	// choose random room
 	// place randomly in that room but not on top of any items
-
-	int x_pos = 5;
-	int y_pos = 5;
-
-	//for (int i = 0; i < enemyCount; i++)
-	//{
-	//	map[x_pos][y_pos] = 'G';//enemy[i];
-	//}
-	enemy[0] = new Goblin();
-
-	if (enemy[0]->setLocation(x_pos, y_pos))
+	for (int i = 0; i < 10; i++)
 	{
-		gameMap->expMap[x_pos][y_pos] = 'G';
-
-		return true;
+		if (enemy[i] != nullptr)
+		{
+			delete enemy[i];
+			enemy[i] = nullptr;
+		}
 	}
 
+	int minSpawns = 1 + (player->level / 5);
+	int maxSpawns = 5 + (player->level / 5);
 
-	return false;
-}
+	spawnEnemies = randomNumber(minSpawns, maxSpawns);
 
-void updateEnemy()
-{
-	if (enemy[0] != nullptr)
+	int roomToSpawn = 0;
+
+	int x_start = 0;
+	int y_start = 0;
+
+	int x_size = 0;
+	int y_size = 0;
+
+	int x_pos = 0;
+	int y_pos = 0;
+
+
+	for (int i = 0; i < spawnEnemies; i++)
 	{
-		if (enemy[0]->hitPoints > 0) gameMap->expMap[enemy[0]->x_pos][enemy[0]->y_pos] = 'G';
-		else
+		roomToSpawn = randomNumber(1, gameMap->numberOfRooms) - 1;
+		x_start = gameMap->roomList[roomToSpawn]->x_start;
+		y_start = gameMap->roomList[roomToSpawn]->y_start;
+
+		x_size = gameMap->roomList[roomToSpawn]->x_size;
+		y_size = gameMap->roomList[roomToSpawn]->y_size;
+
+		x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+		y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
+
+		enemy[i] = new Goblin();
+
+		if (enemy[i]->setLocation(x_pos, y_pos))
 		{
-			player->exp += enemy[0]->expReward;
-			delete enemy[0];
-			enemy[0] = nullptr;
+			gameMap->expMap[x_pos][y_pos] = 'G';
 		}
 	}
 }
 
+void updateEnemy()
+{
+	for (int i = 0; i < spawnEnemies; i++)
+	{
+		if (enemy[i] != nullptr)
+		{
+			if (enemy[i]->hitPoints > 0) gameMap->expMap[enemy[i]->x_pos][enemy[i]->y_pos] = enemy[i]->token;
+			else
+			{
+				player->exp += enemy[i]->expReward;
+				delete enemy[i];
+				enemy[i] = nullptr;
+			}
+		}
+	}
+	
+}
+
+void moveEnemy()
+{
+	for (int i = 0; i < spawnEnemies; i++)
+	{
+		if (enemy[i] != nullptr)
+		{
+			enemy[i]->move(gameMap);
+		}
+	}
+}
 
 // Main function
 
@@ -233,6 +280,10 @@ int main()
 	{
 		startScreen->drawStartScreen();
 		if (startScreen->playerName == "quit") break;
+
+		player = new Fighter();
+		ui = new PlayerInfo(player);
+
 		player->name = startScreen->playerName;
 		newLvl = true;
 
@@ -297,75 +348,90 @@ int main()
 				switch (input)
 				{
 				case KEY_ARROW_UP:
-					destination = gameMap->expMap[player->x_pos][player->y_pos - 1];
-					isFighting = !player->movePlayer(MOVE_UP, destination);
+					destination.x = player->x_pos;
+					destination.y = player->y_pos - 1;
+					destination.token = gameMap->expMap[destination.x][destination.y];
+					isFighting = !player->movePlayer(MOVE_UP, destination.token);
 					break;
 				case KEY_ARROW_DOWN:
-					destination = gameMap->expMap[player->x_pos][player->y_pos + 1];
-					isFighting = !player->movePlayer(MOVE_DOWN, destination);
+					destination.x = player->x_pos;
+					destination.y = player->y_pos + 1;
+					destination.token = gameMap->expMap[destination.x][destination.y];
+					isFighting = !player->movePlayer(MOVE_DOWN, destination.token);
 					break;
 				case KEY_ARROW_LEFT:
-					destination = gameMap->expMap[player->x_pos - 1][player->y_pos];
-					isFighting = !player->movePlayer(MOVE_LEFT, destination);
+					destination.x = player->x_pos - 1;
+					destination.y = player->y_pos;
+					destination.token = gameMap->expMap[destination.x][destination.y];
+					isFighting = !player->movePlayer(MOVE_LEFT, destination.token);
 					break;
 				case KEY_ARROW_RIGHT:
-					destination = gameMap->expMap[player->x_pos + 1][player->y_pos];
-					isFighting = !player->movePlayer(MOVE_RIGHT, destination);
+					destination.x = player->x_pos + 1;
+					destination.y = player->y_pos;
+					destination.token = gameMap->expMap[destination.x][destination.y];
+					isFighting = !player->movePlayer(MOVE_RIGHT, destination.token);
 					break;
 				}
 
+				updatePlayer();
+
 				if (isFighting)
 				{
-					if (destination == 'G')
+					for (int i = 0; i < spawnEnemies; i++)
 					{
-						if (enemy[0]->hasShield)
+						if ( enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
 						{
-							playerHitRoll = player->attack();
-							wasEnemyHit = (playerHitRoll >= (enemy[0]->armorClass + ShieldAC)); //player does damage
-						}
-						else
-						{
-							playerHitRoll = player->attack();
-							wasEnemyHit = (playerHitRoll > enemy[0]->armorClass); //player does damage
-						}
-
-						if (wasEnemyHit) // player to enemy
-						{
-							if (playerHitRoll == NAT_20)
+							if (enemy[i]->hasShield)
 							{
-								dmgDealtToEnemy = player->crit() + player->damage();
+								playerHitRoll = player->attack();
+								wasEnemyHit = (playerHitRoll >= (enemy[i]->armorClass + ShieldAC)); //player does damage
 							}
-							else dmgDealtToEnemy = player->damage();
-
-							enemy[0]->hitPoints -= dmgDealtToEnemy;
-						}
-						else dmgDealtToEnemy = 0;
-
-						if (player->hasShield)
-						{
-							enemyHitRoll[0] = enemy[0]->attack();
-							wasPlayerHit = (enemyHitRoll[0] >= (player->armorClass + ShieldAC)); //enemy does damage
-						}
-						else
-						{
-							enemyHitRoll[0] = enemy[0]->attack();
-							wasPlayerHit = (enemyHitRoll[0] > player->armorClass); //enemy does damage
-						}
-
-						if (wasPlayerHit) // enemy to player
-						{
-							if (enemyHitRoll[0] == NAT_20)
+							else
 							{
-								dmgDealtToPlayer = enemy[0]->crit() + enemy[0]->damage();
+								playerHitRoll = player->attack();
+								wasEnemyHit = (playerHitRoll > enemy[i]->armorClass); //player does damage
 							}
-							else dmgDealtToPlayer = enemy[0]->damage();
 
-							player->hitPoints -= dmgDealtToPlayer;
+							if (wasEnemyHit) // player to enemy
+							{
+								if (playerHitRoll == NAT_20)
+								{
+									dmgDealtToEnemy = player->crit() + player->damage();
+								}
+								else dmgDealtToEnemy = player->damage();
+
+								enemy[i]->hitPoints -= dmgDealtToEnemy;
+							}
+							else dmgDealtToEnemy = 0;
+
+							if (player->hasShield)
+							{
+								enemyHitRoll[i] = enemy[i]->attack();
+								wasPlayerHit = (enemyHitRoll[i] >= (player->armorClass + ShieldAC)); //enemy does damage
+							}
+							else
+							{
+								enemyHitRoll[i] = enemy[i]->attack();
+								wasPlayerHit = (enemyHitRoll[i] > player->armorClass); //enemy does damage
+							}
+
+							if (wasPlayerHit) // enemy to player
+							{
+								if (enemyHitRoll[i] == NAT_20)
+								{
+									dmgDealtToPlayer = enemy[i]->crit() + enemy[0]->damage();
+								}
+								else dmgDealtToPlayer = enemy[i]->damage();
+
+								player->hitPoints -= dmgDealtToPlayer;
+							}
+							else dmgDealtToPlayer = 0;
+
+							fightMessage(i);
+							break;
 						}
-						else dmgDealtToPlayer = 0;
-
-						updateMessage();
 					}
+					
 				}
 
 			}
@@ -376,8 +442,11 @@ int main()
 					newLvl = true;
 					player->floor++;
 					player->exp += 100;
+					continue;
 				}
 			}
+
+			moveEnemy();
 		}
 	}
 

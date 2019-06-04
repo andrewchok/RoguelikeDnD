@@ -21,6 +21,19 @@ const int GAME_WIDTH = 80;
 const int GAME_HEIGHT = 25;
 const int GAME_MAP_HEIGHT = 23;
 
+enum direction
+{
+	up,
+	right,
+	down,
+	left
+};
+
+struct Coordinate
+{
+	int x, y;
+};
+
 class GameMap
 {
 public:
@@ -36,19 +49,6 @@ public:
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int numberOfRooms = 0;
 	std::vector<Room*> roomList = {};
-
-	enum direction
-	{
-		up,
-		right,
-		down,
-		left
-	};
-
-	struct Coordinate
-	{
-		int x, y;
-	};
 
 	std::vector<Coordinate> doorLocations;
 
@@ -458,6 +458,10 @@ public:
 				if (isExplored[x][y]) 
 				{
 					expMap[x][y] = map[x][y];
+				}
+				else
+				{
+					expMap[x][y] = ' ';
 				}
 			}
 			expMap[GAME_WIDTH][y] = '\n';
