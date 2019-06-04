@@ -92,5 +92,8 @@
     <ClInclude Include="Bugbear.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

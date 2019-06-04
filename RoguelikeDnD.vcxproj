@@ -167,6 +167,7 @@
     <ClInclude Include="EnemyCharacter.h" />
     <ClInclude Include="Goblin.h" />
     <ClInclude Include="Hobgoblin.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="Orc.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="Jackal.h" />

@@ -51,7 +51,7 @@ PlayerInfo* ui;
 int randomNumber(int min, int max);
 
 void clearMessage();
-void fightMessage();
+void fightMessage(int unitNum);
 
 void updateSpecialMsg();
 
@@ -81,7 +81,7 @@ void clearMessage()
 	messageStr = "\n";
 }
 
-void fightMessage( int unitNum)
+void fightMessage(int unitNum)
 {
 	// clear existing message and make message here 
 	
