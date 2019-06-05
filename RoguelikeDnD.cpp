@@ -57,7 +57,6 @@ void updateEnemy();
 
 
 // Method Definitions
-
 int randomNumber(int min, int max)
 {
 	srand(unsigned(time(NULL) * 11 * rand()));
@@ -121,6 +120,7 @@ void spawnEnemy()
 			delete enemy[i];
 			enemy[i] = nullptr;
 		}
+		else enemy[i] = nullptr;
 	}
 
 	int minSpawns = 1 + (player->level / 5);
@@ -152,6 +152,8 @@ void spawnEnemy()
 		x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
 		y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
 
+
+		// Choose Enemy to spawn
 		switch (randomNumber(1, 2))
 		{
 		case 1:
@@ -160,6 +162,8 @@ void spawnEnemy()
 		case 2:
 			enemy[i] = new Vulture();
 			break;
+		default:
+			enemy[i] = new Vulture();
 		}
 
 		if (enemy[i]->setLocation(x_pos, y_pos))
@@ -275,55 +279,56 @@ int main()
 				{
 					input = _getch();
 					if (input == KEY_q) break;
-					if (input == KEY_s); //write save game function
-					if (input == KEY_l); //write load game function
+					if (input == KEY_s) continue; //write save game function
+					if (input == KEY_l) continue; //write load game function
 				}
-
-				// Arrow key movement
-				switch (input)
-				{
-				case KEY_ARROW_UP:
-					destination.x = player->x_pos;
-					destination.y = player->y_pos - 1;
-					destination.token = gameMap->expMap[destination.x][destination.y];
-					isFighting = !player->movePlayer(MOVE_UP, destination.token);
-					break;
-				case KEY_ARROW_DOWN:
-					destination.x = player->x_pos;
-					destination.y = player->y_pos + 1;
-					destination.token = gameMap->expMap[destination.x][destination.y];
-					isFighting = !player->movePlayer(MOVE_DOWN, destination.token);
-					break;
-				case KEY_ARROW_LEFT:
-					destination.x = player->x_pos - 1;
-					destination.y = player->y_pos;
-					destination.token = gameMap->expMap[destination.x][destination.y];
-					isFighting = !player->movePlayer(MOVE_LEFT, destination.token);
-					break;
-				case KEY_ARROW_RIGHT:
-					destination.x = player->x_pos + 1;
-					destination.y = player->y_pos;
-					destination.token = gameMap->expMap[destination.x][destination.y];
-					isFighting = !player->movePlayer(MOVE_RIGHT, destination.token);
-					break;
-				}
-
-				updatePlayer();
-
-				if (isFighting)
-				{
-					for (int i = 0; i < spawnEnemies; i++)
-					{
-						if ( enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
-						{
-							msg->attackMessage(player, enemy[i], player->attack(enemy[i]), enemy[i]->attack(player));
-							break;
-						}
-					}
-					
-				}
-
 			}
+
+
+			// Arrow key movement and wasd movement
+			switch (input)
+			{
+			case KEY_ARROW_UP: case KEY_w:
+				destination.x = player->x_pos;
+				destination.y = player->y_pos - 1;
+				destination.token = gameMap->expMap[destination.x][destination.y];
+				isFighting = !player->movePlayer(MOVE_UP, destination.token);
+				break;
+			case KEY_ARROW_DOWN: case KEY_s:
+				destination.x = player->x_pos;
+				destination.y = player->y_pos + 1;
+				destination.token = gameMap->expMap[destination.x][destination.y];
+				isFighting = !player->movePlayer(MOVE_DOWN, destination.token);
+				break;
+			case KEY_ARROW_LEFT: case KEY_a:
+				destination.x = player->x_pos - 1;
+				destination.y = player->y_pos;
+				destination.token = gameMap->expMap[destination.x][destination.y];
+				isFighting = !player->movePlayer(MOVE_LEFT, destination.token);
+				break;
+			case KEY_ARROW_RIGHT: case KEY_d:
+				destination.x = player->x_pos + 1;
+				destination.y = player->y_pos;
+				destination.token = gameMap->expMap[destination.x][destination.y];
+				isFighting = !player->movePlayer(MOVE_RIGHT, destination.token);
+				break;
+			}
+
+			updatePlayer();
+
+			if (isFighting)
+			{
+				for (int i = 0; i < spawnEnemies; i++)
+				{
+					if (enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
+					{
+						msg->attackMessage(player, enemy[i], player->attack(enemy[i]), enemy[i]->attack(player));
+						break;
+					}
+				}
+				isFighting = false;
+			}
+
 			if (input == KEY_e)
 			{
 				if (player->x_pos == gameMap->stairs_loc[0] && player->y_pos == gameMap->stairs_loc[1])

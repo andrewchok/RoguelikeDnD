@@ -1,18 +1,18 @@
 #pragma once
-#ifndef DEATHSCREEN
-#define DEATHSCREEN
+#ifndef HELPSCREEN
+#define HELPSCREEN
 
 #include <iostream>
 #include <string>
 #include <conio.h>
 
-class DeathScreen
+class HelpScreen
 {
 public:
-	DeathScreen() {};
-	~DeathScreen() {};
+	HelpScreen() {};
+	~HelpScreen() {};
 
-	void drawDeathScreen()
+	void drawHelpScreen()
 	{
 		system("CLS");
 		std::cout <<

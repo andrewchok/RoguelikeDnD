@@ -22,6 +22,12 @@
     <Filter Include="Header Files\characters\enemies">
       <UniqueIdentifier>{ac764412-5059-44ec-a2cf-2fbc656ba880}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\characters\playerChars">
+      <UniqueIdentifier>{f6b94743-42af-4a9b-b0ba-9cd49f8f3821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\screens">
+      <UniqueIdentifier>{b5f196fc-c052-43bb-8e95-3b128774490d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RoguelikeDnD.cpp">
@@ -44,16 +50,7 @@
     <ClInclude Include="PlayerInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StartScreen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathScreen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Fighter.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
     <ClInclude Include="EnemyCharacter.h">
@@ -109,6 +106,18 @@
     </ClInclude>
     <ClInclude Include="Zombie.h">
       <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Fighter.h">
+      <Filter>Header Files\characters\playerChars</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathScreen.h">
+      <Filter>Header Files\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScreen.h">
+      <Filter>Header Files\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpScreen.h">
+      <Filter>Header Files\screens</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
