@@ -26,7 +26,7 @@ struct Destination
 };
 
 Destination destination;
-bool isFighting = false;
+bool isValidMove = false;
 int playerHitRoll = 0;
 int enemyHitRoll[10] = { 0 };
 bool newLvl = true;
@@ -202,6 +202,25 @@ void moveEnemy()
 	}
 }
 
+void battle()
+{
+	if (!isValidMove)
+	{
+		for (int i = 0; i < spawnEnemies; i++)
+		{
+			if (enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
+			{
+				int dmgDealtToEnemy = player->attack(enemy[i]);
+				int dmgDealtToPlayer = enemy[i]->attack(player);
+
+				msg->attackMessage(player, enemy[i], dmgDealtToEnemy, dmgDealtToPlayer);
+				break;
+			}
+		}
+	}
+}
+
+
 // Main function
 
 int main()
@@ -292,42 +311,39 @@ int main()
 				destination.x = player->x_pos;
 				destination.y = player->y_pos - 1;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isFighting = !player->movePlayer(MOVE_UP, destination.token);
+				isValidMove = player->movePlayer(MOVE_UP, destination.token);
+				updatePlayer();
+				battle();
+				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_DOWN: case KEY_s:
 				destination.x = player->x_pos;
 				destination.y = player->y_pos + 1;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isFighting = !player->movePlayer(MOVE_DOWN, destination.token);
+				isValidMove = player->movePlayer(MOVE_DOWN, destination.token);
+				updatePlayer();
+				battle();
+				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_LEFT: case KEY_a:
 				destination.x = player->x_pos - 1;
 				destination.y = player->y_pos;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isFighting = !player->movePlayer(MOVE_LEFT, destination.token);
+				isValidMove = player->movePlayer(MOVE_LEFT, destination.token);
+				updatePlayer();
+				battle();
+				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_RIGHT: case KEY_d:
 				destination.x = player->x_pos + 1;
 				destination.y = player->y_pos;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isFighting = !player->movePlayer(MOVE_RIGHT, destination.token);
+				isValidMove = player->movePlayer(MOVE_RIGHT, destination.token);
+				updatePlayer();
+				battle();
+				if (isValidMove) moveEnemy();
 				break;
-			}
-
-			updatePlayer();
-
-			if (isFighting)
-			{
-				for (int i = 0; i < spawnEnemies; i++)
-				{
-					if (enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
-					{
-						msg->attackMessage(player, enemy[i], player->attack(enemy[i]), enemy[i]->attack(player));
-						break;
-					}
-				}
-				isFighting = false;
-			}
+			}			
 
 			if (input == KEY_e)
 			{
@@ -339,8 +355,6 @@ int main()
 					continue;
 				}
 			}
-
-			moveEnemy();
 		}
 	}
 
