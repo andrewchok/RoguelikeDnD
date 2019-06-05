@@ -4,54 +4,84 @@
 
 #include <string>
 #include <queue>
+#include "Units.h"
 
 class Message
 {
-	std::queue<std::string> messageQueue = {};
+public:
+
+	std::queue<std::string> messageQueue;
 	std::string messageStr = "";
 	
-	void clearMessage();
-	void fightMessage(int unitNum);
+	Message() {};
+	~Message() {};
 
-	void clearMessage()
+	void attackMessage(PlayerCharacter* player, EnemyCharacter* enemy, int dmgDealtToEnemy, int dmgDealtToPlayer)
 	{
-		messageStr = "\n";
-	}
-
-	void fightMessage(int unitNum)
-	{
-		// clear existing message and make message here 
-
-		if (isFighting)
+		messageStr = "";
+		
+		if (dmgDealtToEnemy > 0)
 		{
-			//bool wasPlayerHit 
-			//bool wasEnemyHit
-			//int dmgDealtToPlayer 
-			//int dmgDealtToEnemy 
-			messageStr = "";
-			messageStr = "You swung and ";
-			if (wasEnemyHit)
-			{
-				if (playerHitRoll == NAT_20) messageStr += "crit ";
-				else messageStr += "hit ";
-
-				messageStr += enemy[unitNum]->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
-			}
-			else messageStr += "missed! ";
-
-			messageStr += enemy[unitNum]->name + " swung and ";
-			if (wasPlayerHit)
-			{
-				if (enemyHitRoll[unitNum] == NAT_20) messageStr += "crit ";
-				else messageStr += "hit ";
-
-				messageStr += "you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
-			}
-			else messageStr += "missed! ";
-
+			messageStr = "You swung and hit " + enemy->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
+		}
+		else
+		{
+			messageStr = "You swung and missed!";
 		}
 
-		messageStr += "\n";
+		messageQueue.push(messageStr);
+
+		messageStr = "";
+
+		if (enemy->hitPoints <= 0)
+		{
+			messageStr = enemy->name + " was defeated! You gained " + std::to_string(enemy->expReward) + " Exp!";
+		}
+		else 
+		{
+			if (dmgDealtToPlayer > 0)
+			{
+				messageStr = enemy->name + " swung and hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
+			}
+			else
+			{
+				messageStr = enemy->name + " swung and missed!";
+			}
+		}
+
+		messageQueue.push(messageStr);
+	}
+
+	void attackMessage(EnemyCharacter* enemy, int dmgDealtToPlayer)
+	{
+		messageStr = "";
+
+		if (dmgDealtToPlayer > 0)
+		{
+			messageStr = enemy->name + " swung and hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
+		}
+		else
+		{
+			messageStr = enemy->name + " swung and missed!";
+		}
+
+		messageQueue.push(messageStr);
+	}
+
+	void popMessage()
+	{
+		if (!messageQueue.empty())
+		{
+			messageStr = messageQueue.front();
+			messageQueue.pop();
+
+			if (!messageQueue.empty()) messageStr += " <more>\n";
+			else messageStr += "\n";
+		}
+		else
+		{
+			messageStr = "\n";
+		}
 	}
 };
 

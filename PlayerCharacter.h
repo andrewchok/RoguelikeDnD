@@ -56,6 +56,7 @@ public:
 	int restDiceMaxCount = 1;
 	int restDiceCurrentCount = 1;
 	int restDiceType = 10;
+	int rations = 5;
 
 	int floor = 1;
 	int gold = 0;
@@ -72,7 +73,7 @@ public:
 	virtual ~PlayerCharacter() {};
 
 	virtual int crit() = 0;
-	virtual int attack() = 0;
+	virtual int attack(Character* enemy) = 0;
 	virtual int damage() = 0;
 	virtual void shortRest() = 0;
 	virtual void longRest() = 0;

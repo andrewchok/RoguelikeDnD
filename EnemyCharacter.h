@@ -15,6 +15,7 @@ public:
 
 	// Enemy Info
 	int expReward = 0;
+	int hitModifier = 0;
 
 	// ============================
 	// ========= METHODS ==========
@@ -24,12 +25,28 @@ public:
 	virtual ~EnemyCharacter() {};
 
 	virtual int crit() = 0;
-	virtual int attack() = 0;
 	virtual int damage() = 0;
-
 	virtual void move(GameMap* map) = 0;
 
-	
+
+	int attack(Character* player)
+	{
+		if (this->hitPoints <= 0) return 0;
+
+		int dmgDealtToPlayer = 0;
+
+		int roll = roll20();
+		roll = (roll == NAT_20) ? NAT_20 : roll + hitModifier;
+
+		// player does damage if roll >= to enemy AC
+		if (roll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		{
+			dmgDealtToPlayer = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
+			player->hitPoints -= dmgDealtToPlayer;
+		}
+
+		return dmgDealtToPlayer;
+	};
 
 	bool isBlocked(char destination)
 	{

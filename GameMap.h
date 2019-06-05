@@ -45,6 +45,7 @@ public:
 	std::string mapStr = "";
 	char destination = ' ';
 	bool newLvl = true;
+	std::array<int, 2> stairs_loc = { 0, 0 };
 
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int numberOfRooms = 0;
@@ -235,6 +236,29 @@ public:
 		}
 	}
 
+	bool placeStairs()
+	{
+		// choose random room
+		// place randomly in that room but not on top of any items
+		int x_start = this->roomList[2]->x_start;
+		int y_start = this->roomList[2]->y_start;
+
+		int x_size = this->roomList[2]->x_size;
+		int y_size = this->roomList[2]->y_size;
+
+		int x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+		int y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
+
+		if (this->map[x_pos][y_pos] == '.')
+		{
+			this->map[x_pos][y_pos] = '%';
+			stairs_loc = { x_pos, y_pos };
+			return true;
+		}
+
+		return false;
+	}
+
 	void clearMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -421,6 +445,8 @@ public:
 					createCorridor(d.x_loc, d.y_loc, visited, d.x_loc, d.y_loc, dir, lastMove);
 				}
 			}
+
+			placeStairs();
 
 			bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
 

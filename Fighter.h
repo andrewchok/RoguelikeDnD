@@ -34,7 +34,6 @@ Equipment:
 #include <time.h>
 #include "PlayerCharacter.h"
 
-
 class Fighter : public PlayerCharacter
 {
 public:
@@ -126,11 +125,22 @@ public:
 		return result;
 	};
 
-	int attack()
+	int attack(Character* enemy)
 	{
+		int dmgDealtToEnemy = 0;
+
 		int roll = roll20();
 		if(this->level >= 3) roll = improvedCritRoll20();
-		return (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
+		roll = (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
+
+		// player does damage if roll >= to enemy AC
+		if (roll >= (enemy->hasShield ? enemy->armorClass + ShieldAC : enemy->armorClass))
+		{
+			dmgDealtToEnemy = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
+			enemy->hitPoints -= dmgDealtToEnemy;
+		}
+
+		return dmgDealtToEnemy;
 	};
 
 	int damage()

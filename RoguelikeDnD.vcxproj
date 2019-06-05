@@ -166,7 +166,9 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="EnemyCharacter.h" />
     <ClInclude Include="Goblin.h" />
+    <ClInclude Include="Equipment.h" />
     <ClInclude Include="Hobgoblin.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Orc.h" />
     <ClInclude Include="Skeleton.h" />
@@ -181,6 +183,7 @@
     <ClInclude Include="Thug.h" />
     <ClInclude Include="Units.h" />
     <ClInclude Include="Vulture.h" />
+    <ClInclude Include="Weapon.h" />
     <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

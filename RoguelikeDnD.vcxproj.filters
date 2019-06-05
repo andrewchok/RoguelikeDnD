@@ -16,6 +16,12 @@
     <Filter Include="Header Files\characters">
       <UniqueIdentifier>{86db9fd8-51c7-42b7-999c-c3c424d2410a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\items">
+      <UniqueIdentifier>{66244ad9-30ef-402e-a707-acf332d82c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\characters\enemies">
+      <UniqueIdentifier>{ac764412-5059-44ec-a2cf-2fbc656ba880}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RoguelikeDnD.cpp">
@@ -56,44 +62,53 @@
     <ClInclude Include="PlayerCharacter.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
-    <ClInclude Include="Goblin.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
     <ClInclude Include="Units.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Jackal.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Vulture.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Kobold.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Cultist.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Zombie.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Hobgoblin.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Orc.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Thug.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Bugbear.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Equipment.h">
+      <Filter>Header Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Bugbear.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Cultist.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Goblin.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Hobgoblin.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Jackal.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Kobold.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Orc.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Thug.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Vulture.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Zombie.h">
+      <Filter>Header Files\characters\enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
