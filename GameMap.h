@@ -233,7 +233,7 @@ public:
 
 	bool placeRestArea()
 	{
-		if (randomNumber(1, 5) != 1)
+		if (randomNumber(1, 4) != 1)
 		{
 			restArea_loc.x = 0;
 			restArea_loc.y = 0;

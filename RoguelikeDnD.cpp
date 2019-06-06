@@ -108,12 +108,12 @@ void spawnItem()
 	for (int i = 0; i < spawnItems; i++)
 	{
 		// Choose item to spawn
-		switch (randomNumber(1, 5))
+		switch (randomNumber(1, 7))
 		{
 		case 1:
 			item[i] = new Ration();
 			break;
-		case 2: case 3: case 4: case 5:
+		case 2: case 3: case 4: case 5: case 6: case 7:
 			item[i] = new Gold();
 			break;
 		default:
