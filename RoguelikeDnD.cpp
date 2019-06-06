@@ -184,7 +184,10 @@ void eatCheck()
 			if (player->hunger > 500) player->hunger = 500;
 			msg->eatMessage();
 			msg->popMessage();
+
 			ui->updateUI();
+			updateSpecialMsg();
+
 			system("CLS");
 			drawGame();
 		}
