@@ -332,9 +332,12 @@ void spawnEnemy()
 
 	for (int i = 0; i < spawnEnemies; i++)
 	{
+		int minChallenge = player->floor / 10;
+		if (minChallenge > 6) minChallenge = 6;
+		int maxChallenge = (player->floor + 10) / 5;
+		if (maxChallenge > 6) maxChallenge = 6;
 
-		int challenge = randomNumber(0, 1);
-
+		int challenge = randomNumber(minChallenge, maxChallenge);
 
 		// Choose Enemy to spawn
 		switch (challenge)

@@ -63,7 +63,7 @@ public:
 
 	int numOfEnemiesEngaged = 0;
 
-	int floor = 1;
+	int floor = 0;
 	int gold = 0;
 	int exp = 0;
 	int hunger = 500;
