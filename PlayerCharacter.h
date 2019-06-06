@@ -78,7 +78,7 @@ public:
 	virtual void shortRest() = 0;
 	virtual void longRest() = 0;
 	virtual void showAbilities() = 0;
-	virtual void levelUp() = 0;
+	virtual bool levelUp() = 0;
 
 	bool fightCheck(char destination)
 	{

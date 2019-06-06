@@ -16,6 +16,24 @@ public:
 	Message() {};
 	~Message() {};
 
+	void floorMessage(int floor)
+	{
+		messageStr = "";
+
+		messageStr = "Welcome to floor " + std::to_string(floor) + "!";
+
+		messageQueue.push(messageStr);
+	}
+
+	void levelUpMessage(int level)
+	{
+		messageStr = "";
+
+		messageStr = "Congratulations you are now level " + std::to_string(level) + "!";
+
+		messageQueue.push(messageStr);
+	}
+
 	void attackMessage(PlayerCharacter* player, EnemyCharacter* enemy, int dmgDealtToEnemy, int dmgDealtToPlayer)
 	{
 		messageStr = "";

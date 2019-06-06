@@ -104,7 +104,7 @@ bool placePlayer()
 void updatePlayer()
 {
 	gameMap->expMap[player->x_pos][player->y_pos] = '@';
-	player->levelUp();
+	if (player->levelUp()) msg->levelUpMessage(player->level);
 }
 
 void spawnEnemy()
@@ -168,7 +168,7 @@ void spawnEnemy()
 
 		if (enemy[i]->setLocation(x_pos, y_pos))
 		{
-			gameMap->expMap[x_pos][y_pos] = enemy[i]->token;
+			//gameMap->expMap[x_pos][y_pos] = enemy[i]->token;
 		}
 	}
 }
@@ -179,7 +179,10 @@ void updateEnemy()
 	{
 		if (enemy[i] != nullptr)
 		{
-			if (enemy[i]->hitPoints > 0) gameMap->expMap[enemy[i]->x_pos][enemy[i]->y_pos] = enemy[i]->token;
+			if (enemy[i]->hitPoints > 0) 
+			{
+				if(enemy[i]->canSeePlayer(player, gameMap)) gameMap->expMap[enemy[i]->x_pos][enemy[i]->y_pos] = enemy[i]->token;
+			}
 			else
 			{
 				player->exp += enemy[i]->expReward;
@@ -247,6 +250,8 @@ int main()
 
 				updatePlayer();
 				spawnEnemy();
+
+				msg->floorMessage(player->floor);
 				newLvl = false;
 			}
 			else
@@ -283,9 +288,10 @@ int main()
 
 			if (player->hitPoints <= 0)
 			{
+				deathScreen->drawDeathScreen();
+				deathScreen->showStats(player);
 				delete player;
 				player = nullptr;
-				deathScreen->drawDeathScreen();
 				break;
 			}
 

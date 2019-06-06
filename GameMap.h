@@ -319,7 +319,7 @@ public:
 		return false;
 	}
 
-	bool createCorridor(int x, int y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 10> dir, direction lastMove)
+	bool createCorridor(int x, int y, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 10> dir, direction lastMove)
 	{
 		if (x != start_x || y != start_y)
 		{
@@ -448,7 +448,7 @@ public:
 
 			placeStairs();
 
-			bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
+			bool visited[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
 
 			int start_x = randomNumber(roomList.front()->x_start + 1, roomList.front()->x_start + roomList.front()->x_size - 2);
 			int start_y = randomNumber(roomList.front()->y_start + 1, roomList.front()->y_start + roomList.front()->y_size - 2);

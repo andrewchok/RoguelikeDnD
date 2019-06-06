@@ -4,6 +4,7 @@
 #include <string>
 #include <time.h>
 #include "Character.h"
+#include "GameMap.h"
 
 class EnemyCharacter : public Character
 {
@@ -136,9 +137,40 @@ public:
 
 	void idle() {};
 	
-	bool canSeePlayer()
+	bool checkRoom(int start_x, int start_y, int end_x, int end_y, GameMap* gameMap, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT])
 	{
-		return true;
+		if (start_x >= GAME_WIDTH || start_y >= GAME_MAP_HEIGHT) return false;
+		if (start_x < 0 || start_y < 0) return false;
+		if (visited[start_x][start_y] == true) return false;
+		if (!(gameMap->map[start_x][start_y] == '.' || gameMap->map[start_x][start_y] == '%')) return false;
+		if (start_x == end_x & start_y == end_y) return true;
+
+		visited[start_x][start_y] = true;
+
+		if (checkRoom(start_x - 1, start_y - 1, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x - 1, start_y, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x - 1, start_y + 1, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x, start_y - 1, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x, start_y + 1, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x + 1, start_y - 1, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x + 1, start_y, end_x, end_y, gameMap, visited)) return true;
+		if (checkRoom(start_x + 1, start_y + 1, end_x, end_y, gameMap, visited)) return true;
+	}
+
+	bool checkSurrounding(Character* player)
+	{
+		if ((this->x_pos == player->x_pos || this->x_pos + 1 == player->x_pos || this->x_pos - 1 == player->x_pos) &&
+			(this->y_pos == player->y_pos || this->y_pos + 1 == player->y_pos || this->y_pos - 1 == player->y_pos)) return true;
+		else return false;
+	}
+
+	bool canSeePlayer(Character* player, GameMap* gameMap)
+	{
+		if (checkSurrounding(player)) return true;
+
+		bool visited[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
+
+		return checkRoom(this->x_pos, this->y_pos, player->x_pos, player->y_pos, gameMap, visited);
 	};
 };
 

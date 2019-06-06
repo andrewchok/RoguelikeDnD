@@ -151,7 +151,8 @@ public:
 	void shortRest() {};
 	void longRest() {};
 	void showAbilities() {};
-	void levelUp() 
+
+	bool levelUp() 
 	{
 		int hpIncrease = 0;
 		int tempModCON = 0;
@@ -160,69 +161,69 @@ public:
 		{
 			switch (levelAdvancement.front())
 			{
-				case (300): // level 2
-					this->level = 2;
+			case (300): // level 2
+				this->level = 2;
 
-					//gain action surge (1 use)
-					break;
-				case (900): // level 3
-					this->level = 3;
+				//gain action surge (1 use)
+				break;
+			case (900): // level 3
+				this->level = 3;
 
-					this->dndClass = "Fighter(Champion)";
-					break;
-				case (2700): // level 4
-					this->level = 4;
-					
-					this->STR++; 
-					modSTR = statMod(STR);
-					this->CON++; 
-					tempModCON = modCON;
-					modCON = statMod(CON);
+				this->dndClass = "Fighter(Champion)";
+				break;
+			case (2700): // level 4
+				this->level = 4;
 
-					if (modCON > tempModCON)
-					{
-						this->maxHitPoints += this->level - 1;
-						this->hitPoints += this->level - 1;
-					}
-					
-					break;
-				case (6500): // level 5
-					this->level = 5;
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
 
-					this->proficiencyBonus = 3;
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
 
-					// add Extra Attack
-					break;
-				case (14000):
-					break;
-				case (23000):
-					break;
-				case (34000):
-					break;
-				case (48000):
-					break;
-				case (64000):
-					break;
-				case (85000):
-					break;
-				case (100000):
-					break;
-				case (120000):
-					break;
-				case (140000):
-					break;
-				case (165000):
-					break;
-				case (195000):
-					break;
-				case (225000):
-					break;
-				case (265000):
-					break;
-				case (305000):
-					break;
-				case (355000):
-					break;
+				break;
+			case (6500): // level 5
+				this->level = 5;
+
+				this->proficiencyBonus = 3;
+
+				// add Extra Attack
+				break;
+			case (14000):
+				break;
+			case (23000):
+				break;
+			case (34000):
+				break;
+			case (48000):
+				break;
+			case (64000):
+				break;
+			case (85000):
+				break;
+			case (100000):
+				break;
+			case (120000):
+				break;
+			case (140000):
+				break;
+			case (165000):
+				break;
+			case (195000):
+				break;
+			case (225000):
+				break;
+			case (265000):
+				break;
+			case (305000):
+				break;
+			case (355000):
+				break;
 			}
 
 			hpIncrease = roll(1, 10) + this->modCON;
@@ -232,7 +233,9 @@ public:
 			this->restDiceCurrentCount++;
 
 			levelAdvancement.pop();
+			return true;
 		}
+		else return false;
 		
 	};
 
