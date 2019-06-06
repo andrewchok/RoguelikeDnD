@@ -265,8 +265,12 @@ void spawnEnemy()
 
 	for (int i = 0; i < spawnEnemies; i++)
 	{
+
+		int challenge = randomNumber(0, 6);
+
+
 		// Choose Enemy to spawn
-		switch (randomNumber(0, 2))
+		switch (challenge)
 		{
 		case 0: // Challenge Rating 0
 			switch (randomNumber(0, 1)) 

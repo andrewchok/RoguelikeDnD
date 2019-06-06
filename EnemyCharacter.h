@@ -57,13 +57,13 @@ public:
 
 		int dmgDealtToPlayer = 0;
 
-		int roll = roll20();
-		roll = (roll == NAT_20) ? NAT_20 : roll + hitModifier;
+		int diceRoll = roll20();
+		diceRoll = (diceRoll == NAT_20) ? NAT_20 : diceRoll + hitModifier;
 
 		// player does damage if roll >= to enemy AC
-		if (roll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		if (diceRoll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
 		{
-			dmgDealtToPlayer = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
+			dmgDealtToPlayer = (diceRoll == NAT_20) ? this->damage() + this->crit() : this->damage();
 			player->hitPoints -= dmgDealtToPlayer;
 		}
 
