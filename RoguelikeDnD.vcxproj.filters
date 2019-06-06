@@ -125,5 +125,14 @@
     <ClInclude Include="UnitsAndItems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Merrow.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Nightmare.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="WinterWolf.h">
+      <Filter>Header Files\characters\enemies</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -266,13 +266,74 @@ void spawnEnemy()
 	for (int i = 0; i < spawnEnemies; i++)
 	{
 		// Choose Enemy to spawn
-		switch (randomNumber(1, 2))
+		switch (randomNumber(0, 2))
 		{
-		case 1:
-			enemy[i] = new Goblin();
+		case 0: // Challenge Rating 0
+			switch (randomNumber(0, 1)) 
+			{
+			case 0:
+				enemy[i] = new Jackal();
+				break;
+			case 1:
+				enemy[i] = new Vulture();
+				break;
+			}
 			break;
-		case 2:
-			enemy[i] = new Vulture();
+		case 1: // Challenge Rating 1/8
+			switch (randomNumber(0, 1))
+			{
+			case 0:
+				enemy[i] = new Kobold();
+				break;
+			case 1:
+				enemy[i] = new Cultist();
+				break;
+			}
+			break;
+		case 2: // Challenge Rating 1/4
+			switch (randomNumber(0, 2))
+			{
+			case 0:
+				enemy[i] = new Goblin();
+				break;
+			case 1:
+				enemy[i] = new Skeleton();
+				break;
+			case 2:
+				enemy[i] = new Zombie();
+				break;
+			}
+			break;
+		case 3: // Challenge Rating 1/2
+			switch (randomNumber(0, 2))
+			{
+			case 0:
+				enemy[i] = new Hobgoblin();
+				break;
+			case 1:
+				enemy[i] = new Orc();
+				break;
+			case 2:
+				enemy[i] = new Thug();
+				break;
+			}
+			break;
+		case 4: // Challenge Rating 1
+			enemy[i] = new Bugbear();
+			break;
+		case 5: // Challenge Rating 2
+			enemy[i] = new Merrow();
+			break;
+		case 6: // Challenge Rating 3
+			switch (randomNumber(0, 1))
+			{
+			case 0:
+				enemy[i] = new Nightmare();
+				break;
+			case 1:
+				enemy[i] = new WinterWolf();
+				break;
+			}
 			break;
 		default:
 			enemy[i] = new Vulture();

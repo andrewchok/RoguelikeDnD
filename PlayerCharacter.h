@@ -61,6 +61,8 @@ public:
 	bool isFighting = false;
 	bool isGettingItem = false;
 
+	int numOfEnemiesEngaged = 0;
+
 	int floor = 1;
 	int gold = 0;
 	int exp = 0;

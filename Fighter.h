@@ -42,6 +42,9 @@ public:
 	// ======== VARIABLES =========
 	// ============================
 
+	int extraAttack = 0;
+	int bonusDmg = 0;
+
 	// ============================
 	// ========= METHODS ==========
 	// ============================
@@ -65,9 +68,15 @@ public:
 		Equipment = "a. Battleaxe : 1d8 slashing | Versatile(1d10)\nb. 2 Handaxes : 1d6 slashing | Light; Thrown(range 4/12)";
 		dmgRoll = "1d8";
 
+		extraAttack = 0;
+		bonusDmg = 0;
+
 		restDiceMaxCount = 1;
 		restDiceCurrentCount = 1;
 		restDiceType = 10;
+
+		// Fighting Style (Defense)
+		armorClass += 1;
 
 		levelAdvancement.push(300); // lvl 2
 		levelAdvancement.push(900); // lvl 3
@@ -116,10 +125,23 @@ public:
 	{
 		int result = 0;
 
-		srand(unsigned(time(NULL) * 7 * rand()));
+		srand(unsigned(time(NULL) * 13 * rand()));
 		result += rand() % 20 + 1;
 
 		if (result == 20 || result == 19) return NAT_20; // nat 20
+		if (result == 1) return NAT_1; // nat 1
+
+		return result;
+	};
+
+	int superiorCritRoll20()
+	{
+		int result = 0;
+
+		srand(unsigned(time(NULL) * 17 * rand()));
+		result += rand() % 20 + 1;
+
+		if (result == 20 || result == 19 || result == 18) return NAT_20; // nat 20
 		if (result == 1) return NAT_1; // nat 1
 
 		return result;
@@ -129,15 +151,28 @@ public:
 	{
 		int dmgDealtToEnemy = 0;
 
-		int roll = roll20();
-		if(this->level >= 3) roll = improvedCritRoll20();
-		roll = (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
-
-		// player does damage if roll >= to enemy AC
-		if (roll >= (enemy->hasShield ? enemy->armorClass + ShieldAC : enemy->armorClass))
+		// survivor
+		if (this->level >= 18)
 		{
-			dmgDealtToEnemy = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
-			enemy->hitPoints -= dmgDealtToEnemy;
+			if (this->hitPoints < (this->maxHitPoints / 2) && this->hitPoints > 0)
+			{
+				this->hitPoints += 5 + modCON;
+			}
+		}
+
+		for (int i = 0; i <= this->extraAttack; i++)
+		{
+			int roll = roll20();
+			if (this->level >= 3) roll = improvedCritRoll20();
+			if (this->level >= 15) roll = superiorCritRoll20();
+			roll = (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
+
+			// player does damage if roll >= to enemy AC
+			if (roll >= (enemy->hasShield ? enemy->armorClass + ShieldAC : enemy->armorClass))
+			{
+				dmgDealtToEnemy = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
+				enemy->hitPoints -= dmgDealtToEnemy;
+			}
 		}
 
 		return dmgDealtToEnemy;
@@ -145,7 +180,7 @@ public:
 
 	int damage()
 	{
-		return roll(1, 8) + modSTR;
+		return roll(1, 8) + modSTR + bonusDmg;
 	};
 
 	void shortRest() {};
@@ -192,37 +227,147 @@ public:
 
 				this->proficiencyBonus = 3;
 
-				// add Extra Attack
+				extraAttack++;
 				break;
-			case (14000):
+			case (14000): // level 6
+				this->level = 6;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
+
 				break;
-			case (23000):
+			case (23000): // level 7
+				this->level = 7;
+
 				break;
-			case (34000):
+			case (34000): // level 8
+				this->level = 8;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
 				break;
-			case (48000):
+			case (48000):// level 9
+				this->level = 9;
+
+				this->proficiencyBonus = 4;
+
 				break;
-			case (64000):
+			case (64000):// level 10
+				this->level = 10;
+
+				bonusDmg = 2;
+
 				break;
-			case (85000):
+			case (85000):// level 11
+				this->level = 11;
+
+				extraAttack++;
+
 				break;
-			case (100000):
+			case (100000):// level 12
+				this->level = 12;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
 				break;
-			case (120000):
+			case (120000):// level 13
+				this->level = 13;
+
+				this->proficiencyBonus = 5;
+
 				break;
-			case (140000):
+			case (140000):// level 14
+				this->level = 14;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
 				break;
-			case (165000):
+			case (165000):// level 15
+				this->level = 15;
+				//superior crit roll
 				break;
-			case (195000):
+			case (195000):// level 16
+				this->level = 16;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
+
 				break;
-			case (225000):
+			case (225000):// level 17
+				this->level = 17;
+
 				break;
-			case (265000):
+			case (265000):// level 18
+				this->level = 18;
+
+				//survivor
 				break;
-			case (305000):
+			case (305000):// level 19
+				this->level = 19;
+
+				this->STR++;
+				modSTR = statMod(STR);
+				this->CON++;
+				tempModCON = modCON;
+				modCON = statMod(CON);
+
+				if (modCON > tempModCON)
+				{
+					this->maxHitPoints += this->level - 1;
+					this->hitPoints += this->level - 1;
+				}
+
 				break;
-			case (355000):
+			case (355000):// level 20
+				this->level = 20;
+
+				extraAttack++;
+
 				break;
 			}
 

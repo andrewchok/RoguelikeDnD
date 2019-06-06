@@ -23,6 +23,9 @@
 #include "Orc.h"
 #include "Thug.h"
 #include "Bugbear.h"
+#include "Merrow.h"
+#include "Nightmare.h"
+#include "WinterWolf.h"
 
 // ============================
 // ========== ITEMS ===========

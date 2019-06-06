@@ -171,7 +171,9 @@
     <ClInclude Include="HelpScreen.h" />
     <ClInclude Include="Hobgoblin.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="Merrow.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Nightmare.h" />
     <ClInclude Include="Orc.h" />
     <ClInclude Include="Ration.h" />
     <ClInclude Include="Skeleton.h" />
@@ -187,6 +189,7 @@
     <ClInclude Include="UnitsAndItems.h" />
     <ClInclude Include="Vulture.h" />
     <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WinterWolf.h" />
     <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
