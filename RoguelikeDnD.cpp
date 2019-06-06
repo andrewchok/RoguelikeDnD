@@ -20,6 +20,8 @@ bool newLvl = true;
 int spawnEnemies = 0;
 int spawnItems = 0;
 bool isEating = false;
+bool canRest = false;
+int healAmt = 0;
 
 StartScreen* startScreen = new StartScreen();
 DeathScreen* deathScreen = new DeathScreen();
@@ -44,6 +46,8 @@ void spawnItem();
 void updateItem();
 
 void eatCheck();
+
+void restCheck();
 
 bool placePlayer();
 void updatePlayer();
@@ -202,6 +206,69 @@ void eatCheck()
 	isEating = false;
 }
 
+void restCheck()
+{
+	msg->restPromptMessage();
+	msg->popMessage();
+
+	system("CLS");
+	drawGame();
+	input = _getch();
+	if ( input == KEY_1 )
+	{
+		// short rest
+		if (player->hunger > SHORT_REST_HUNGER_COST && player->restDiceCurrentCount > 0)
+		{
+			player->hunger -= SHORT_REST_HUNGER_COST;
+			player->restDiceCurrentCount--;
+
+			msg->shortRestMessage(player->restDiceCurrentCount);
+
+			healAmt = randomNumber(1, player->restDiceType) + player->modCON;
+			player->hitPoints += healAmt;
+			if (player->hitPoints > player->maxHitPoints)
+			{
+				player->hitPoints = player->maxHitPoints;
+				healAmt = FULL_HEAL;
+			}
+
+			msg->healMessage(healAmt);
+		}
+		else
+		{
+			if (player->hunger <= SHORT_REST_HUNGER_COST)
+			{
+				msg->cantRestMessage(hunger);
+			}
+			else if (player->restDiceCurrentCount <= 0)
+			{
+				msg->cantRestMessage(restDice);
+			}
+		}
+	}
+	else if( input == KEY_2 )
+	{
+		// long rest
+		if (player->hunger > LONG_REST_HUNGER_COST)
+		{
+			player->hunger -= LONG_REST_HUNGER_COST;
+
+			player->restDiceCurrentCount = player->restDiceMaxCount;
+			msg->longRestMessage(player->restDiceCurrentCount);
+
+			player->hitPoints = player->maxHitPoints;
+			healAmt = FULL_HEAL;
+			msg->healMessage(healAmt);
+		}
+		else
+		{
+			msg->cantRestMessage(hunger);
+		}
+	}
+
+	canRest = false;
+}
+
 bool placePlayer()
 {
 	// choose random room
@@ -266,7 +333,7 @@ void spawnEnemy()
 	for (int i = 0; i < spawnEnemies; i++)
 	{
 
-		int challenge = randomNumber(0, 6);
+		int challenge = randomNumber(0, 1);
 
 
 		// Choose Enemy to spawn
@@ -552,11 +619,32 @@ int main()
 					player->exp += 100;
 					continue;
 				}
+
+				if (player->location.x == gameMap->restArea_loc.x && player->location.y == gameMap->restArea_loc.y)
+				{
+					canRest = true;
+					for (auto en : enemy)
+					{
+						if (en != nullptr)
+						{
+							canRest = false;
+							break;
+						}
+					}
+
+					if (canRest)
+					{
+						restCheck();
+					}
+					else msg->cantRestMessage(enemies);
+					continue;
+				}
 			}
 
 			if (input == KEY_f)
 			{
 				isEating = true;
+				continue;
 			}
 		}
 	}

@@ -61,7 +61,7 @@ public:
 		diceRoll = (diceRoll == NAT_20) ? NAT_20 : diceRoll + hitModifier;
 
 		// player does damage if roll >= to enemy AC
-		if (diceRoll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		if (diceRoll >= (player->hasShield ? player->armorClass + SHIELD_AC : player->armorClass))
 		{
 			dmgDealtToPlayer = (diceRoll == NAT_20) ? this->damage() + this->crit() : this->damage();
 			player->hitPoints -= dmgDealtToPlayer;

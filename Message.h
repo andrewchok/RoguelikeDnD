@@ -5,6 +5,7 @@
 #include <string>
 #include <queue>
 #include "UnitsAndItems.h"
+#include "Helper.h"
 
 class Message
 {
@@ -118,6 +119,64 @@ public:
 		messageStr = "";
 
 		messageStr = "Yum! That was tasty.";
+
+		messageQueue.push(messageStr);
+	}
+
+	void cantRestMessage(noRestReason reason)
+	{
+		messageStr = "";
+
+		switch (reason)
+		{
+		case hunger:
+			messageStr = "Cannot rest. Too hungry... Eat something!";
+			break;
+		case enemies:
+			messageStr = "Cannot rest. Enemies still roaming the floor!";
+			break;
+		case restDice:
+			messageStr = "Cannot short rest. A long rest is needed.";
+			break;
+		}
+		
+
+		messageQueue.push(messageStr);
+	}
+
+	void restPromptMessage()
+	{
+		messageStr = "";
+
+		messageStr = "You have reached a Resting Area! press <1> short rest OR <2> long rest.";
+
+		messageQueue.push(messageStr);
+	}
+
+	void shortRestMessage(int restDiceCount)
+	{
+		messageStr = "";
+
+		messageStr = "You took a short rest. (" + std::to_string(restDiceCount) + " left)";
+
+		messageQueue.push(messageStr);
+	}
+
+	void longRestMessage(int restDiceCount)
+	{
+		messageStr = "";
+
+		messageStr = "You took a long rest. You now have " + std::to_string(restDiceCount) + " short rests.";
+
+		messageQueue.push(messageStr);
+	}
+
+	void healMessage(int healAmt)
+	{
+		messageStr = "";
+
+		messageStr = "You healed for " + std::to_string(healAmt) + ".";
+		if (healAmt == 999) messageStr = "Fully Healed!";
 
 		messageQueue.push(messageStr);
 	}

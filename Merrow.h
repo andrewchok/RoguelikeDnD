@@ -63,7 +63,7 @@ public:
 		roll = (roll == NAT_20) ? NAT_20 : roll + hitModifier;
 
 		// player does damage if roll >= to enemy AC
-		if (roll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		if (roll >= (player->hasShield ? player->armorClass + SHIELD_AC : player->armorClass))
 		{
 			dmgDealtToPlayer = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
 		}
@@ -71,7 +71,7 @@ public:
 		roll = (roll == NAT_20) ? NAT_20 : roll + hitModifier;
 
 		// player does damage if roll >= to enemy AC
-		if (roll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		if (roll >= (player->hasShield ? player->armorClass + SHIELD_AC : player->armorClass))
 		{
 			dmgDealtToPlayer += (roll == NAT_20) ? (this->roll(2, 8)) + 4 : (this->roll(1, 8)) + 4;
 		}

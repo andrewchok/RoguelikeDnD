@@ -168,7 +168,7 @@ public:
 			roll = (roll == NAT_20) ? NAT_20 : roll + proficiencyBonus + modSTR;
 
 			// player does damage if roll >= to enemy AC
-			if (roll >= (enemy->hasShield ? enemy->armorClass + ShieldAC : enemy->armorClass))
+			if (roll >= (enemy->hasShield ? enemy->armorClass + SHIELD_AC : enemy->armorClass))
 			{
 				dmgDealtToEnemy = (roll == NAT_20) ? this->damage() + this->crit() : this->damage();
 				enemy->hitPoints -= dmgDealtToEnemy;

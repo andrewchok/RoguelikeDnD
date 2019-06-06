@@ -23,6 +23,7 @@ public:
 	char destination = ' ';
 	bool newLvl = true;
 	Coordinate stairs_loc;
+	Coordinate restArea_loc;
 
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int numberOfRooms = 0;
@@ -230,6 +231,37 @@ public:
 		return false;
 	}
 
+	bool placeRestArea()
+	{
+		if (randomNumber(1, 5) != 1)
+		{
+			restArea_loc.x = 0;
+			restArea_loc.y = 0;
+			return false;
+		}
+
+		// choose random room
+		// place randomly in that room but not on top of any items
+		int x_start = this->roomList[5]->x_start;
+		int y_start = this->roomList[5]->y_start;
+
+		int x_size = this->roomList[5]->x_size;
+		int y_size = this->roomList[5]->y_size;
+
+		int x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+		int y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
+
+		if (this->map[x_pos][y_pos] == '.')
+		{
+			this->map[x_pos][y_pos] = '!';
+			restArea_loc.x = x_pos;
+			restArea_loc.y = y_pos;
+			return true;
+		}
+
+		return false;
+	}
+
 	void clearMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -418,6 +450,7 @@ public:
 			}
 
 			placeStairs();
+			placeRestArea();
 
 			bool visited[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
 

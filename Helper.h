@@ -16,6 +16,17 @@
 #include <queue>
 
 // ============================
+// ========= DEFINES ==========
+// ============================
+
+#define NAT_20 99
+#define NAT_1 -99
+#define SHIELD_AC 2 
+#define FULL_HEAL 999
+#define SHORT_REST_HUNGER_COST 25
+#define LONG_REST_HUNGER_COST 325
+
+// ============================
 // ========== ENUMS ===========
 // ============================
 
@@ -42,6 +53,13 @@ enum DmgType
 	Radiant,
 	Slashing,
 	Thunder
+};
+
+enum noRestReason
+{
+	hunger,
+	enemies,
+	restDice
 };
 
 enum RoomNumber

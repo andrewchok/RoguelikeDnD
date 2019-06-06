@@ -77,7 +77,7 @@ public:
 			if (roll20() + player->modDEX >= 12) dmgDealtToPlayer /= 2;
 		}
 		// player does damage if roll >= to enemy AC
-		else if (diceRoll >= (player->hasShield ? player->armorClass + ShieldAC : player->armorClass))
+		else if (diceRoll >= (player->hasShield ? player->armorClass + SHIELD_AC : player->armorClass))
 		{
 			dmgDealtToPlayer = (diceRoll == NAT_20) ? this->damage() + this->crit() : this->damage();
 		}
