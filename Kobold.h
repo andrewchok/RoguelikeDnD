@@ -29,6 +29,8 @@ public:
 		OA_AC = armorClass - (speed - 30) / 5;
 		expReward = 25;
 
+		hitModifier = 4;
+
 		// Stats
 		STR = 7;
 		DEX = 15;
@@ -52,20 +54,10 @@ public:
 		return roll(1, 4);
 	};
 
-	int attack()
-	{
-		int roll = roll20();
-		return (roll == NAT_20) ? NAT_20 : roll + 4;
-	};
-
 	int damage()
 	{
 		return roll(1, 4) + 2;
 	};
-
-	void move() {};
-	void idle() {};
-	bool canSeePlayer() { return true; };
 };
 
 #endif

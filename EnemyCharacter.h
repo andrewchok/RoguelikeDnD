@@ -27,8 +27,29 @@ public:
 
 	virtual int crit() = 0;
 	virtual int damage() = 0;
-	virtual void move(GameMap* map) = 0;
 
+	bool canSeePlayer(Character* player, GameMap* gameMap)
+	{
+		if (checkSurrounding(player)) return true;
+
+		bool visited[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
+
+		return checkRoom(this->location.x, this->location.y, player->location.x, player->location.y, gameMap, visited);
+	};
+
+	void idle() {};
+
+	void move(GameMap* map)
+	{
+		if (roll(1, 3) == 1)
+		{
+			idle();
+		}
+		else
+		{
+			randomMove(map);
+		}
+	};
 
 	int attack(Character* player)
 	{
@@ -92,7 +113,7 @@ public:
 
 	void randomMove(GameMap* map)
 	{
-		std::array<direction, 4> moveDirection = { up, down, left, right };
+		std::array<Direction, 4> moveDirection = { up, down, left, right };
 		random_shuffle(moveDirection.begin(), moveDirection.end());
 
 		for (auto dir : moveDirection)
@@ -100,50 +121,48 @@ public:
 			switch (dir)
 			{
 			case up:
-				if (isValidMove(map->map[this->x_pos][this->y_pos - 1]))
+				if (isValidMove(map->map[this->location.x][this->location.y - 1]))
 				{
-					if (isBlocked(map->expMap[this->x_pos][this->y_pos - 1])) return;
-					this->y_pos--;
+					if (isBlocked(map->expMap[this->location.x][this->location.y - 1])) return;
+					this->location.y--;
 					return;
 				}
 				break;
 			case down:
-				if (isValidMove(map->map[this->x_pos][this->y_pos + 1]))
+				if (isValidMove(map->map[this->location.x][this->location.y + 1]))
 				{
-					if (isBlocked(map->expMap[this->x_pos][this->y_pos + 1])) return;
-					this->y_pos++;
+					if (isBlocked(map->expMap[this->location.x][this->location.y + 1])) return;
+					this->location.y++;
 					return;
 				}
 				break;
 			case left:
-				if (isValidMove(map->map[this->x_pos - 1][this->y_pos]))
+				if (isValidMove(map->map[this->location.x - 1][this->location.y]))
 				{
-					if (isBlocked(map->expMap[this->x_pos - 1][this->y_pos])) return;
-					this->x_pos--;
+					if (isBlocked(map->expMap[this->location.x - 1][this->location.y])) return;
+					this->location.x--;
 					return;
 				}
 				break;
 			case right:
-				if (isValidMove(map->map[this->x_pos + 1][this->y_pos]))
+				if (isValidMove(map->map[this->location.x + 1][this->location.y]))
 				{
-					if (isBlocked(map->expMap[this->x_pos + 1][this->y_pos])) return;
-					this->x_pos++;
+					if (isBlocked(map->expMap[this->location.x + 1][this->location.y])) return;
+					this->location.x++;
 					return;
 				}
 				break;
 			}
 		}
 	}
-
-	void idle() {};
-	
+		
 	bool checkRoom(int start_x, int start_y, int end_x, int end_y, GameMap* gameMap, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT])
 	{
 		if (start_x >= GAME_WIDTH || start_y >= GAME_MAP_HEIGHT) return false;
 		if (start_x < 0 || start_y < 0) return false;
 		if (visited[start_x][start_y] == true) return false;
 		if (!(gameMap->map[start_x][start_y] == '.' || gameMap->map[start_x][start_y] == '%')) return false;
-		if (start_x == end_x & start_y == end_y) return true;
+		if (start_x == end_x && start_y == end_y) return true;
 
 		visited[start_x][start_y] = true;
 
@@ -159,18 +178,22 @@ public:
 
 	bool checkSurrounding(Character* player)
 	{
-		if ((this->x_pos == player->x_pos || this->x_pos + 1 == player->x_pos || this->x_pos - 1 == player->x_pos) &&
-			(this->y_pos == player->y_pos || this->y_pos + 1 == player->y_pos || this->y_pos - 1 == player->y_pos)) return true;
+		if ((this->location.x == player->location.x || this->location.x + 1 == player->location.x || this->location.x - 1 == player->location.x) &&
+			(this->location.y == player->location.y || this->location.y + 1 == player->location.y || this->location.y - 1 == player->location.y)) return true;
 		else return false;
 	}
 
-	bool canSeePlayer(Character* player, GameMap* gameMap)
+	bool setLocation(int x_pos, int y_pos, Coordinate player_loc)
 	{
-		if (checkSurrounding(player)) return true;
+		if (x_pos > 0 && x_pos < 80 && y_pos > 0 && y_pos < 23)
+		{
+			if (x_pos == player_loc.x && y_pos < player_loc.y) return false;
 
-		bool visited[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
-
-		return checkRoom(this->x_pos, this->y_pos, player->x_pos, player->y_pos, gameMap, visited);
+			this->location.x = x_pos;
+			this->location.y = y_pos;
+			return true;
+		}
+		return false;
 	};
 };
 

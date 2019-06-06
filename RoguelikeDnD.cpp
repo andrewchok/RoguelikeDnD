@@ -1,11 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <conio.h>
+#include "Helper.h"
 #include "KeyStrokes.h"
-#include "Units.h"
-#include "Enums.h"
+#include "UnitsAndItems.h"
 #include "GameMap.h"
 #include "PlayerInfo.h"
 #include "StartScreen.h"
@@ -15,32 +10,28 @@
 // Global Variables
 // GAME_WIDTH + 1 (for \n)
 int input = -1;
-char specialMsg[GAME_WIDTH + 1] = { 0 };
 std::string specialMsgStr = "";
 std::string gameStr = "";
 
-struct Destination
-{
-	char token;
-	int x, y;
-};
-
 Destination destination;
 bool isValidMove = false;
-int playerHitRoll = 0;
 int enemyHitRoll[10] = { 0 };
 bool newLvl = true;
 int spawnEnemies = 0;
+int spawnItems = 0;
+bool isEating = false;
 
 StartScreen* startScreen = new StartScreen();
 DeathScreen* deathScreen = new DeathScreen();
 
 PlayerCharacter* player;
+Item* item[10] = { 0 };
 EnemyCharacter* enemy[10] = { 0 };
 
+Message* msg = new Message();
 GameMap* gameMap = new GameMap();
 PlayerInfo* ui;
-Message* msg = new Message();;
+
 
 // Method Declarations
 int randomNumber(int min, int max);
@@ -48,6 +39,11 @@ int randomNumber(int min, int max);
 void updateSpecialMsg();
 
 void drawGame();
+
+void spawnItem();
+void updateItem();
+
+void eatCheck();
 
 bool placePlayer();
 void updatePlayer();
@@ -57,18 +53,12 @@ void updateEnemy();
 
 
 // Method Definitions
-int randomNumber(int min, int max)
-{
-	srand(unsigned(time(NULL) * 11 * rand()));
-	int value = (rand() % (max - min + 1)) + min;
-	return value;
-}
 
 void updateSpecialMsg()
 {
 	// write code to show special msg
 	specialMsgStr = "";
-	specialMsgStr = "Name:" + player->name + "     Level:" + std::to_string(player->level) + "    Class:" + player->dndClass + "\n" ;
+	specialMsgStr = "Name:" + player->name + "     Level:" + std::to_string(player->level) + "    Class:" + player->dndClass + "    Rations:" + std::to_string(player->rations) + "(5)\n" ;
 }
 
 void drawGame()
@@ -76,6 +66,137 @@ void drawGame()
 	gameStr = "";
 	gameStr = msg->messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
 	std::cout << gameStr;
+}
+
+void spawnItem()
+{
+
+	// randomly check for how many items to spawn 1-10
+	// choose random room to spawn
+	// place randomly in that room but not on top of stairs
+	for (int i = 0; i < 10; i++)
+	{
+		if (item[i] != nullptr)
+		{
+			delete item[i];
+			item[i] = nullptr;
+		}
+		else item[i] = nullptr;
+	}
+
+	int minSpawns = 1;
+	int maxSpawns = 10;
+
+	spawnItems = randomNumber(minSpawns, maxSpawns);
+
+	int roomToSpawn = 0;
+
+	int x_start = 0;
+	int y_start = 0;
+
+	int x_size = 0;
+	int y_size = 0;
+
+	int x_pos = 0;
+	int y_pos = 0;
+
+
+	for (int i = 0; i < spawnItems; i++)
+	{
+		// Choose item to spawn
+		switch (randomNumber(1, 5))
+		{
+		case 1:
+			item[i] = new Ration();
+			break;
+		case 2: case 3: case 4: case 5:
+			item[i] = new Gold();
+			break;
+		default:
+			item[i] = new Gold();
+		}
+
+		do
+		{
+			roomToSpawn = randomNumber(1, gameMap->numberOfRooms) - 1;
+			x_start = gameMap->roomList[roomToSpawn]->x_start;
+			y_start = gameMap->roomList[roomToSpawn]->y_start;
+
+			x_size = gameMap->roomList[roomToSpawn]->x_size;
+			y_size = gameMap->roomList[roomToSpawn]->y_size;
+
+			x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+			y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
+
+		}
+		while (!(item[i]->setLocation(x_pos, y_pos, gameMap->stairs_loc, player->location)));
+	}
+}
+
+void updateItem()
+{
+	for (int i = 0; i < spawnItems; i++)
+	{
+		if (item[i] != nullptr)
+		{
+			if (item[i]->location.x == player->location.x && item[i]->location.y == player->location.y) 
+			{
+				if (item[i]->name == "Gold")
+				{
+					player->gold += item[i]->amount;
+					msg->goldMessage(item[i]->amount);
+					delete item[i];
+					item[i] = nullptr;
+				}
+				else if (item[i]->name == "Ration" && player->rations < 5)
+				{
+					player->rations += 1;
+					msg->rationMessage(player);
+					delete item[i];
+					item[i] = nullptr;
+				}
+			}
+			else
+			{
+				if (gameMap->isExplored[item[i]->location.x][item[i]->location.y])
+				{
+					gameMap->expMap[item[i]->location.x][item[i]->location.y] = item[i]->token;
+				}
+			}
+		}
+	}
+}
+
+void eatCheck()
+{
+	msg->eatCheckMessage(player);
+	msg->popMessage();
+
+	system("CLS");
+	drawGame();
+	input = _getch();
+	if (input == KEY_e)
+	{
+		if (player->rations > 0)
+		{
+			player->rations--;
+			player->hunger += 350;
+			if (player->hunger > 500) player->hunger = 500;
+			msg->eatMessage();
+			msg->popMessage();
+			ui->updateUI();
+			system("CLS");
+			drawGame();
+		}
+	}
+	else
+	{
+		msg->popMessage();
+		system("CLS");
+		drawGame();
+	}
+
+	isEating = false;
 }
 
 bool placePlayer()
@@ -103,16 +224,15 @@ bool placePlayer()
 
 void updatePlayer()
 {
-	gameMap->expMap[player->x_pos][player->y_pos] = '@';
+	gameMap->expMap[player->location.x][player->location.y] = '@';
 	if (player->levelUp()) msg->levelUpMessage(player->level);
 }
 
 void spawnEnemy()
 {
-	// randomly check for how many enemies to spawn based on floor
-	// spawn said enemy
-	// choose random room
-	// place randomly in that room but not on top of any items
+	// randomly check for how many enemies to spawn based on player level
+	// types of enemies depend on current floor
+	// choose random room to spawn enemies
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemy[i] != nullptr)
@@ -142,17 +262,6 @@ void spawnEnemy()
 
 	for (int i = 0; i < spawnEnemies; i++)
 	{
-		roomToSpawn = randomNumber(1, gameMap->numberOfRooms) - 1;
-		x_start = gameMap->roomList[roomToSpawn]->x_start;
-		y_start = gameMap->roomList[roomToSpawn]->y_start;
-
-		x_size = gameMap->roomList[roomToSpawn]->x_size;
-		y_size = gameMap->roomList[roomToSpawn]->y_size;
-
-		x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
-		y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
-
-
 		// Choose Enemy to spawn
 		switch (randomNumber(1, 2))
 		{
@@ -166,10 +275,20 @@ void spawnEnemy()
 			enemy[i] = new Vulture();
 		}
 
-		if (enemy[i]->setLocation(x_pos, y_pos))
+		do
 		{
-			//gameMap->expMap[x_pos][y_pos] = enemy[i]->token;
+			roomToSpawn = randomNumber(1, gameMap->numberOfRooms) - 1;
+			x_start = gameMap->roomList[roomToSpawn]->x_start;
+			y_start = gameMap->roomList[roomToSpawn]->y_start;
+
+			x_size = gameMap->roomList[roomToSpawn]->x_size;
+			y_size = gameMap->roomList[roomToSpawn]->y_size;
+
+			x_pos = randomNumber(x_start + 1, x_start + x_size - 2);
+			y_pos = randomNumber(y_start + 1, y_start + y_size - 2);
+
 		}
+		while (!(enemy[i]->setLocation(x_pos, y_pos, player->location)));
 	}
 }
 
@@ -179,9 +298,9 @@ void updateEnemy()
 	{
 		if (enemy[i] != nullptr)
 		{
-			if (enemy[i]->hitPoints > 0) 
+			if (enemy[i]->hitPoints > 0)
 			{
-				if(enemy[i]->canSeePlayer(player, gameMap)) gameMap->expMap[enemy[i]->x_pos][enemy[i]->y_pos] = enemy[i]->token;
+				if (enemy[i]->canSeePlayer(player, gameMap)) gameMap->expMap[enemy[i]->location.x][enemy[i]->location.y] = enemy[i]->token;
 			}
 			else
 			{
@@ -190,8 +309,7 @@ void updateEnemy()
 				enemy[i] = nullptr;
 			}
 		}
-	}
-	
+	}	
 }
 
 void moveEnemy()
@@ -207,11 +325,11 @@ void moveEnemy()
 
 void battle()
 {
-	if (!isValidMove)
+	if (player->isFighting)
 	{
 		for (int i = 0; i < spawnEnemies; i++)
 		{
-			if (enemy[i] != nullptr && destination.x == enemy[i]->x_pos && destination.y == enemy[i]->y_pos)
+			if (enemy[i] != nullptr && destination.x == enemy[i]->location.x && destination.y == enemy[i]->location.y)
 			{
 				int dmgDealtToEnemy = player->attack(enemy[i]);
 				int dmgDealtToPlayer = enemy[i]->attack(player);
@@ -220,6 +338,7 @@ void battle()
 				break;
 			}
 		}
+		player->isFighting = false;
 	}
 }
 
@@ -245,28 +364,31 @@ int main()
 			{
 				gameMap->createNewMap();
 				placePlayer();
-				gameMap->explore(player->x_pos, player->y_pos);
+				gameMap->explore(player->location.x, player->location.y);
 				gameMap->refreshExpMap();
 
 				updatePlayer();
 				spawnEnemy();
+				spawnItem();
 
 				msg->floorMessage(player->floor);
 				newLvl = false;
 			}
 			else
 			{
-				gameMap->explore(player->x_pos, player->y_pos);
+				gameMap->explore(player->location.x, player->location.y);
 				gameMap->refreshExpMap();
 				updatePlayer();
 			}
+			updateItem();
 			updateEnemy();
+			
 
 
 			gameMap->makeExpMap();
 			ui->updateUI();
 			updateSpecialMsg();
-
+			
 			do
 			{
 				system("CLS");
@@ -281,10 +403,12 @@ int main()
 						if (input == KEY_SPACE) break;
 					}
 				}
-				else input = _getch();
 			}
 			while (!msg->messageQueue.empty());
 
+			if (isEating) eatCheck();
+			
+			input = _getch();
 
 			if (player->hitPoints <= 0)
 			{
@@ -314,37 +438,37 @@ int main()
 			switch (input)
 			{
 			case KEY_ARROW_UP: case KEY_w:
-				destination.x = player->x_pos;
-				destination.y = player->y_pos - 1;
+				destination.x = player->location.x;
+				destination.y = player->location.y - 1;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isValidMove = player->movePlayer(MOVE_UP, destination.token);
+				isValidMove = player->movePlayer(up, destination.token);
 				updatePlayer();
 				battle();
 				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_DOWN: case KEY_s:
-				destination.x = player->x_pos;
-				destination.y = player->y_pos + 1;
+				destination.x = player->location.x;
+				destination.y = player->location.y + 1;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isValidMove = player->movePlayer(MOVE_DOWN, destination.token);
+				isValidMove = player->movePlayer(down, destination.token);
 				updatePlayer();
 				battle();
 				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_LEFT: case KEY_a:
-				destination.x = player->x_pos - 1;
-				destination.y = player->y_pos;
+				destination.x = player->location.x - 1;
+				destination.y = player->location.y;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isValidMove = player->movePlayer(MOVE_LEFT, destination.token);
+				isValidMove = player->movePlayer(left, destination.token);
 				updatePlayer();
 				battle();
 				if (isValidMove) moveEnemy();
 				break;
 			case KEY_ARROW_RIGHT: case KEY_d:
-				destination.x = player->x_pos + 1;
-				destination.y = player->y_pos;
+				destination.x = player->location.x + 1;
+				destination.y = player->location.y;
 				destination.token = gameMap->expMap[destination.x][destination.y];
-				isValidMove = player->movePlayer(MOVE_RIGHT, destination.token);
+				isValidMove = player->movePlayer(right, destination.token);
 				updatePlayer();
 				battle();
 				if (isValidMove) moveEnemy();
@@ -353,13 +477,18 @@ int main()
 
 			if (input == KEY_e)
 			{
-				if (player->x_pos == gameMap->stairs_loc[0] && player->y_pos == gameMap->stairs_loc[1])
+				if (player->location.x == gameMap->stairs_loc.x && player->location.y == gameMap->stairs_loc.y)
 				{
 					newLvl = true;
 					player->floor++;
 					player->exp += 100;
 					continue;
 				}
+			}
+
+			if (input == KEY_f)
+			{
+				isEating = true;
 			}
 		}
 	}

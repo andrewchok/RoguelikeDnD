@@ -33,7 +33,7 @@ Equipment:
 #include <string>
 #include <time.h>
 #include "Character.h"
-#include "Enums.h"
+#include "Helper.h"
 #include <queue>
 
 
@@ -58,10 +58,13 @@ public:
 	int restDiceType = 10;
 	int rations = 5;
 
+	bool isFighting = false;
+	bool isGettingItem = false;
+
 	int floor = 1;
 	int gold = 0;
 	int exp = 0;
-	int hunger = 1000;
+	int hunger = 500;
 
 	std::queue<int> levelAdvancement = {};
 
@@ -104,26 +107,33 @@ public:
 	{
 		if (fightCheck(destination))
 		{
+			isFighting = true;
 			return false;
 		}
 		else {
+			if (!(destination == '$' || destination == '&')) 
+			{
+				isGettingItem = true;
+			}
+			else isGettingItem = false;
+
 			if (!(destination == '-' || destination == '|' || destination == ' '))
 			{
 				if (hunger > 0) this->hunger--;
 				if (hunger <= 0) this->hitPoints--;
 				switch (dir)
 				{
-				case MOVE_UP:
-					this->y_pos--;
+				case up:
+					this->location.y--;
 					return true;
-				case MOVE_DOWN:
-					this->y_pos++;
+				case down:
+					this->location.y++;
 					return true;
-				case MOVE_LEFT:
-					this->x_pos--;
+				case left:
+					this->location.x--;
 					return true;
-				case MOVE_RIGHT:
-					this->x_pos++;
+				case right:
+					this->location.x++;
 					return true;
 				}
 			}

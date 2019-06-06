@@ -1,38 +1,15 @@
 #pragma once
 #ifndef GAMEMAP
 #define GAMEMAP
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <conio.h>
-#include <time.h>
-#include <array>
-#include <algorithm>
+#include "Helper.h"
 #include "Room.h"
-#include <vector>
-#include <random>
-#include <chrono>
-#include "Units.h"
+#include "UnitsAndItems.h"
+
 
 // Game dimension constants
 const int GAME_WIDTH = 80;
 const int GAME_HEIGHT = 25;
 const int GAME_MAP_HEIGHT = 23;
-
-enum direction
-{
-	up,
-	right,
-	down,
-	left
-};
-
-struct Coordinate
-{
-	int x, y;
-};
 
 class GameMap
 {
@@ -45,7 +22,7 @@ public:
 	std::string mapStr = "";
 	char destination = ' ';
 	bool newLvl = true;
-	std::array<int, 2> stairs_loc = { 0, 0 };
+	Coordinate stairs_loc;
 
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int numberOfRooms = 0;
@@ -59,13 +36,6 @@ public:
 	};
 
 	~GameMap() {};
-
-	int randomNumber(int min, int max)
-	{
-		srand(unsigned(time(NULL) * 11 * rand()));
-		int value = (rand() % (max - min + 1)) + min;
-		return value;
-	}
 
 	bool drawRoom(Room * room)
 	{
@@ -252,7 +222,8 @@ public:
 		if (this->map[x_pos][y_pos] == '.')
 		{
 			this->map[x_pos][y_pos] = '%';
-			stairs_loc = { x_pos, y_pos };
+			stairs_loc.x = x_pos;
+			stairs_loc.y = y_pos;
 			return true;
 		}
 
@@ -284,7 +255,7 @@ public:
 
 		visited[start_x][start_y] = true;
 
-		std::array<direction, 4> dir = { down, up, left, right };
+		std::array<Direction, 4> dir = { down, up, left, right };
 
 		for (auto n : dir)
 		{
@@ -319,7 +290,7 @@ public:
 		return false;
 	}
 
-	bool createCorridor(int x, int y, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<direction, 10> dir, direction lastMove)
+	bool createCorridor(int x, int y, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<Direction, 10> dir, Direction lastMove)
 	{
 		if (x != start_x || y != start_y)
 		{
@@ -422,7 +393,7 @@ public:
 				{
 					bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { false };
 
-					std::array<direction, 10> dir;
+					std::array<Direction, 10> dir;
 					switch (d.ori)
 					{
 					case DOOR_TOP:
@@ -440,7 +411,7 @@ public:
 					}
 
 					random_shuffle(dir.begin(), dir.end());
-					direction lastMove = dir.front();
+					Direction lastMove = dir.front();
 
 					createCorridor(d.x_loc, d.y_loc, visited, d.x_loc, d.y_loc, dir, lastMove);
 				}

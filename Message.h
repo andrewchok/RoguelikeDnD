@@ -4,7 +4,7 @@
 
 #include <string>
 #include <queue>
-#include "Units.h"
+#include "UnitsAndItems.h"
 
 class Message
 {
@@ -82,6 +82,42 @@ public:
 		{
 			messageStr = enemy->name + " swung and missed!";
 		}
+
+		messageQueue.push(messageStr);
+	}
+
+	void goldMessage(int amount)
+	{
+		messageStr = "";
+		
+		messageStr = "You picked up " + std::to_string(amount) + " Gold! ";
+		
+		messageQueue.push(messageStr);
+	}
+
+	void rationMessage(PlayerCharacter* player)
+	{
+		messageStr = "";
+
+		messageStr = "You picked up a Ration! You now have " + std::to_string(player->rations) + " Rations!";
+
+		messageQueue.push(messageStr);
+	}
+
+	void eatCheckMessage(PlayerCharacter* player)
+	{
+		messageStr = "";
+
+		messageStr = "You have " + std::to_string(player->rations) + " Rations, eat one? press <e> to eat";
+
+		messageQueue.push(messageStr);
+	}
+
+	void eatMessage()
+	{
+		messageStr = "";
+
+		messageStr = "Yum! That was tasty.";
 
 		messageQueue.push(messageStr);
 	}

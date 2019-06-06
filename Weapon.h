@@ -3,13 +3,13 @@
 #define WEAPON
 
 #include "Equipment.h"
-#include "Enums.h"
+#include "Helper.h"
 
 class Weapon : public Equipment
 {
 public:
 
-	dmgType damageType = dmgType::Acid;
+	DmgType damageType = DmgType::Acid;
 	int diceType = 4;
 	int numOfDice = 1;
 

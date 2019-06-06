@@ -1,6 +1,10 @@
 #pragma once
-#ifndef UNITS
-#define UNITS
+#ifndef UNITSANDITEMS
+#define UNITSANDITEMS
+
+// ============================
+// ========== UNITS ===========
+// ============================
 
 #include "Character.h"
 
@@ -20,5 +24,16 @@
 #include "Thug.h"
 #include "Bugbear.h"
 
+// ============================
+// ========== ITEMS ===========
+// ============================
+
+#include "Item.h"
+
+#include "Equipment.h"
+#include "Weapon.h"
+
+#include "Ration.h"
+#include "Gold.h"
 
 #endif

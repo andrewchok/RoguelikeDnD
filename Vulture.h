@@ -57,20 +57,6 @@ public:
 	{
 		return roll(1, 4);
 	};
-
-	void move(GameMap* map)
-	{
-		if (roll(1, 3) == 1)
-		{
-			idle();
-		}
-		else
-		{
-			randomMove(map);
-		}
-	};
-	void idle() {};
-	bool canSeePlayer() { return true; };
 };
 
 #endif

@@ -43,8 +43,7 @@ public:
 	int modWIS = 999;
 	int modCHA = 999;
 
-	int x_pos = -1;
-	int y_pos = -1;
+	Coordinate location;
 
 	// ============================
 	// ========= METHODS ==========
@@ -88,8 +87,8 @@ public:
 	{
 		if (x_pos > 0 && x_pos < 80 && y_pos > 0 && y_pos < 23)
 		{
-			this->x_pos = x_pos;
-			this->y_pos = y_pos;
+			this->location.x = x_pos;
+			this->location.y = y_pos;
 			return true;
 		}
 		return false;

@@ -35,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyStrokes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -57,9 +54,6 @@
       <Filter>Header Files\characters</Filter>
     </ClInclude>
     <ClInclude Include="PlayerCharacter.h">
-      <Filter>Header Files\characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Units.h">
       <Filter>Header Files\characters</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
@@ -118,6 +112,18 @@
     </ClInclude>
     <ClInclude Include="HelpScreen.h">
       <Filter>Header Files\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Ration.h">
+      <Filter>Header Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Gold.h">
+      <Filter>Header Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitsAndItems.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

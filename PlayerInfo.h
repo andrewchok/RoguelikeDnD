@@ -3,7 +3,7 @@
 #define PLAYERINFO
 
 #include <string>
-#include "Units.h"
+#include "UnitsAndItems.h"
 
 class PlayerInfo
 {
@@ -78,7 +78,7 @@ public:
 		str.resize(7);
 		uiStr.replace(61, 7, str);
 		// Hunger values [75 - 77]
-		str = std::to_string(player->hunger / 10);
+		str = std::to_string(player->hunger / 5 + ((player->hunger % 5 > 0) ? 1 : 0));
 		str.resize(3);
 		uiStr.replace(75, 3, str);
 	}

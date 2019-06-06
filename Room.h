@@ -1,29 +1,9 @@
 #pragma once
 #ifndef ROOM
 #define ROOM
-#include <vector>
 
-enum RoomNumber
-{
-	ROOM_INVALID,
-	ROOM_ONE,	// Top-Left
-	ROOM_TWO,	// Top-Center
-	ROOM_THREE,	// Top-Right
-	ROOM_FOUR,	// Center-Left
-	ROOM_FIVE,	// Center
-	ROOM_SIX,	// Center-Right
-	ROOM_SEVEN,	// Bottom-Left
-	ROOM_EIGHT,	// Bottom-Center
-	ROOM_NINE	// Bottom-Right
-};
+#include "Helper.h"
 
-enum DoorOrientation
-{
-	DOOR_TOP,
-	DOOR_RIGHT,
-	DOOR_BOTTOM,
-	DOOR_LEFT
-};
 
 class Room
 {
@@ -39,12 +19,6 @@ public:
 	bool hasRightDoor = false;
 	bool hasBottomDoor = false;
 	bool hasLeftDoor = false;
-
-	struct door
-	{
-		DoorOrientation ori;
-		int x_loc, y_loc;
-	};
 
 	std::vector<door> doorList = {};
 
