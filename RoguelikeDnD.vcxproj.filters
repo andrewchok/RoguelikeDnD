@@ -134,5 +134,8 @@
     <ClInclude Include="WinterWolf.h">
       <Filter>Header Files\characters\enemies</Filter>
     </ClInclude>
+    <ClInclude Include="InfoScreen.h">
+      <Filter>Header Files\screens</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

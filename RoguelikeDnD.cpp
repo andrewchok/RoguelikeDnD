@@ -4,6 +4,7 @@
 #include "GameMap.h"
 #include "PlayerInfo.h"
 #include "StartScreen.h"
+#include "InfoScreen.h"
 #include "DeathScreen.h"
 #include "Message.h"
 
@@ -24,6 +25,7 @@ bool canRest = false;
 int healAmt = 0;
 
 StartScreen* startScreen = new StartScreen();
+InfoScreen* infoScreen = new InfoScreen();
 DeathScreen* deathScreen = new DeathScreen();
 
 PlayerCharacter* player;
@@ -493,6 +495,8 @@ int main()
 	{
 		startScreen->drawStartScreen();
 		if (startScreen->playerName == "quit") break;
+
+		infoScreen->drawInfoScreen();
 
 		player = new Fighter();
 		ui = new PlayerInfo(player);
