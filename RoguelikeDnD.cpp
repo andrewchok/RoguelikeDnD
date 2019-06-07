@@ -8,8 +8,7 @@
 #include "DeathScreen.h"
 #include "Message.h"
 
-// Global Variables
-// GAME_WIDTH + 1 (for \n)
+// Variables
 int input = -1;
 std::string specialMsgStr = "";
 std::string gameStr = "";
@@ -42,8 +41,6 @@ int randomNumber(int min, int max);
 
 void updateSpecialMsg();
 
-void drawGame();
-
 void spawnItem();
 void updateItem();
 
@@ -57,6 +54,8 @@ void updatePlayer();
 void spawnEnemy();
 void updateEnemy();
 
+void drawGame();
+
 
 // Method Definitions
 
@@ -65,13 +64,6 @@ void updateSpecialMsg()
 	// write code to show special msg
 	specialMsgStr = "";
 	specialMsgStr = "Name:" + player->name + "     Level:" + std::to_string(player->level) + "    Class:" + player->dndClass + "    Rations:" + std::to_string(player->rations) + "(5)\n" ;
-}
-
-void drawGame()
-{
-	gameStr = "";
-	gameStr = msg->messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
-	std::cout << gameStr;
 }
 
 void spawnItem()
@@ -178,7 +170,6 @@ void eatCheck()
 	msg->eatCheckMessage(player);
 	msg->popMessage();
 
-	system("CLS");
 	drawGame();
 	input = _getch();
 	if (input == KEY_e)
@@ -194,14 +185,12 @@ void eatCheck()
 			ui->updateUI();
 			updateSpecialMsg();
 
-			system("CLS");
 			drawGame();
 		}
 	}
 	else
 	{
 		msg->popMessage();
-		system("CLS");
 		drawGame();
 	}
 
@@ -213,7 +202,6 @@ void restCheck()
 	msg->restPromptMessage();
 	msg->popMessage();
 
-	system("CLS");
 	drawGame();
 	input = _getch();
 	if ( input == KEY_1 )
@@ -486,6 +474,49 @@ void battle()
 	}
 }
 
+void drawGame()
+{
+	system("CLS");
+	gameStr = "";
+	gameStr = msg->messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
+	std::cout << gameStr;
+}
+
+//#include "windows.h"
+//HANDLE screen_beta = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+//HANDLE screen_alpha = GetStdHandle(STD_OUTPUT_HANDLE);
+//
+//void drawGame()
+//{
+//	//system("CLS");
+//	gameStr = "";
+//	gameStr = msg->messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
+//
+//	DWORD written = 0;
+//	char* gameCHAR = (char*)malloc(sizeof(char)*(gameStr.length()+1));
+//	for (int i = 0; i < gameStr.length(); i++) gameCHAR[i] = gameStr[i];
+//
+//	if (GetStdHandle(STD_OUTPUT_HANDLE) == screen_alpha)
+//	{
+//		WriteConsoleA(screen_beta, gameCHAR, gameStr.length()+1, &written, NULL);
+//		SetConsoleActiveScreenBuffer(screen_beta);
+//		free(gameCHAR);
+//	}
+//	else if (GetStdHandle(STD_OUTPUT_HANDLE) == screen_beta)
+//	{
+//		WriteConsoleA(screen_alpha, gameCHAR, gameStr.length()+1, &written, NULL);
+//		SetConsoleActiveScreenBuffer(screen_alpha);
+//		free(gameCHAR);
+//	}
+//	else
+//	{
+//		free(gameCHAR);
+//		exit(EXIT_FAILURE);
+//	}
+//	
+//	//std::cout << gameStr;
+//}
+
 
 // Main function
 
@@ -538,7 +569,6 @@ int main()
 			
 			do
 			{
-				system("CLS");
 				msg->popMessage();
 
 				drawGame();

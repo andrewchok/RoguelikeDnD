@@ -110,9 +110,6 @@
     <ClInclude Include="StartScreen.h">
       <Filter>Header Files\screens</Filter>
     </ClInclude>
-    <ClInclude Include="HelpScreen.h">
-      <Filter>Header Files\screens</Filter>
-    </ClInclude>
     <ClInclude Include="Ration.h">
       <Filter>Header Files\items</Filter>
     </ClInclude>

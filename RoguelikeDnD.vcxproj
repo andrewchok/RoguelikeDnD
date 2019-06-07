@@ -170,7 +170,6 @@
     <ClInclude Include="Goblin.h" />
     <ClInclude Include="Equipment.h" />
     <ClInclude Include="Gold.h" />
-    <ClInclude Include="HelpScreen.h" />
     <ClInclude Include="Hobgoblin.h" />
     <ClInclude Include="InfoScreen.h" />
     <ClInclude Include="Item.h" />
