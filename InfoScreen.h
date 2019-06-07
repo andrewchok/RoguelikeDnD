@@ -35,12 +35,12 @@ public:
 			"	!	rest area\n"
 			"	$	gold\n"
 			"	&	ration (food)\n"
-			"\n"
 			"Player Controls:\n"
 			"	Use arrow keys to move (or wasd)\n"
 			"	press < e > to use tile block player is on top of(use rest area, stairs)\n"
 			"	Press < F12 > followed by < q > to quit game\n"
 			"	Press < f > for eat option\n"
+			"	If you see \"<more>\" press < space > to read the next message\n"
 			"\n"
 			"Press <space> to continue...\n";
 
