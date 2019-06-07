@@ -14,8 +14,7 @@ const int GAME_MAP_HEIGHT = 23;
 class GameMap
 {
 public:
-	// Global Variables
-	// GAME_WIDTH + 1 (for \n)
+
 	char map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
 	bool isExplored[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
 	char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored

@@ -17,6 +17,7 @@ public:
 	// Enemy Info
 	int expReward = 0;
 	int hitModifier = 0;
+	bool isFighting = false;
 
 	// ============================
 	// ========= METHODS ==========
@@ -39,15 +40,32 @@ public:
 
 	void idle() {};
 
-	void move(GameMap* map)
+	void move(GameMap* map, PlayerCharacter* player)
 	{
+		if (canSeePlayer(player, map))
+		{
+			if (roll(1, 6) == 1)
+			{
+				idle();
+			}
+			else if (roll(1, 4) == 1)
+			{
+				randomMove(map, player);
+			}
+			else
+			{
+				aggressiveMove(map, player);
+			}
+			return;
+		}
+
 		if (roll(1, 3) == 1)
 		{
 			idle();
 		}
 		else
 		{
-			randomMove(map);
+			randomMove(map, player);
 		}
 	};
 
@@ -70,9 +88,9 @@ public:
 		return dmgDealtToPlayer;
 	};
 
-	bool isBlocked(char destination)
+	bool isBlocked(char destination, PlayerCharacter* player)
 	{
-		if (isFighting(destination)) 
+		if (fightCheck(destination))
 		{
 			//fight!!! 
 			return true;
@@ -95,10 +113,11 @@ public:
 		return false;
 	}
 
-	bool isFighting(char destination)
+	bool fightCheck(char destination)
 	{
-		if (destination == '@') return true;
-		return false;
+		if (destination == '@') isFighting = true;
+		else isFighting = false;
+		return isFighting;
 	}
 
 	bool isValidMove(char destination)
@@ -111,7 +130,7 @@ public:
 		return true;
 	}
 
-	void randomMove(GameMap* map)
+	void randomMove(GameMap* map, PlayerCharacter* player)
 	{
 		std::array<Direction, 4> moveDirection = { up, down, left, right };
 		random_shuffle(moveDirection.begin(), moveDirection.end());
@@ -123,7 +142,7 @@ public:
 			case up:
 				if (isValidMove(map->map[this->location.x][this->location.y - 1]))
 				{
-					if (isBlocked(map->expMap[this->location.x][this->location.y - 1])) return;
+					if (isBlocked(map->expMap[this->location.x][this->location.y - 1], player)) return;
 					this->location.y--;
 					return;
 				}
@@ -131,7 +150,7 @@ public:
 			case down:
 				if (isValidMove(map->map[this->location.x][this->location.y + 1]))
 				{
-					if (isBlocked(map->expMap[this->location.x][this->location.y + 1])) return;
+					if (isBlocked(map->expMap[this->location.x][this->location.y + 1], player)) return;
 					this->location.y++;
 					return;
 				}
@@ -139,7 +158,7 @@ public:
 			case left:
 				if (isValidMove(map->map[this->location.x - 1][this->location.y]))
 				{
-					if (isBlocked(map->expMap[this->location.x - 1][this->location.y])) return;
+					if (isBlocked(map->expMap[this->location.x - 1][this->location.y], player)) return;
 					this->location.x--;
 					return;
 				}
@@ -147,13 +166,62 @@ public:
 			case right:
 				if (isValidMove(map->map[this->location.x + 1][this->location.y]))
 				{
-					if (isBlocked(map->expMap[this->location.x + 1][this->location.y])) return;
+					if (isBlocked(map->expMap[this->location.x + 1][this->location.y], player)) return;
 					this->location.x++;
 					return;
 				}
 				break;
 			}
 		}
+	}
+
+	void aggressiveMove(GameMap* map, PlayerCharacter* player)
+
+	{
+		std::vector<Direction> moveDirection;
+
+		if (this->location.x < player->location.x) moveDirection.push_back(right);
+		if (this->location.x > player->location.x) moveDirection.push_back(left);
+		if (this->location.y < player->location.y) moveDirection.push_back(down);
+		if (this->location.y > player->location.y) moveDirection.push_back(up);
+
+		std::random_shuffle(moveDirection.begin(), moveDirection.end());
+
+		switch (moveDirection.front())
+		{
+		case up:
+			if (isValidMove(map->map[this->location.x][this->location.y - 1]))
+			{
+				if (isBlocked(map->expMap[this->location.x][this->location.y - 1], player)) return;
+				this->location.y--;
+				return;
+			}
+			break;
+		case down:
+			if (isValidMove(map->map[this->location.x][this->location.y + 1]))
+			{
+				if (isBlocked(map->expMap[this->location.x][this->location.y + 1], player)) return;
+				this->location.y++;
+				return;
+			}
+			break;
+		case left:
+			if (isValidMove(map->map[this->location.x - 1][this->location.y]))
+			{
+				if (isBlocked(map->expMap[this->location.x - 1][this->location.y], player)) return;
+				this->location.x--;
+				return;
+			}
+			break;
+		case right:
+			if (isValidMove(map->map[this->location.x + 1][this->location.y]))
+			{
+				if (isBlocked(map->expMap[this->location.x + 1][this->location.y], player)) return;
+				this->location.x++;
+				return;
+			}
+		}
+		
 	}
 		
 	bool checkRoom(int start_x, int start_y, int end_x, int end_y, GameMap* gameMap, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT])

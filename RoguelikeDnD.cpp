@@ -456,7 +456,12 @@ void moveEnemy()
 	{
 		if (enemy[i] != nullptr)
 		{
-			enemy[i]->move(gameMap);
+			enemy[i]->move(gameMap, player);
+			if (enemy[i]->isFighting)
+			{
+				int dmgDealtToPlayer = enemy[i]->attack(player);
+				msg->enemyAttackMessage(enemy[i], player, dmgDealtToPlayer);
+			}
 		}
 	}
 }
@@ -470,13 +475,12 @@ void battle()
 			if (enemy[i] != nullptr && destination.x == enemy[i]->location.x && destination.y == enemy[i]->location.y)
 			{
 				int dmgDealtToEnemy = player->attack(enemy[i]);
-				int dmgDealtToPlayer = enemy[i]->attack(player);
-
-				msg->attackMessage(player, enemy[i], dmgDealtToEnemy, dmgDealtToPlayer);
+				//int dmgDealtToPlayer = enemy[i]->attack(player);
+				msg->playerAttackMessage(player, enemy[i], dmgDealtToEnemy);
+				//msg->attackMessage(player, enemy[i], dmgDealtToEnemy, dmgDealtToPlayer);
 				break;
 			}
 		}
-		player->isFighting = false;
 	}
 }
 
@@ -521,7 +525,7 @@ int main()
 			updateItem();
 			updateEnemy();
 			
-
+			if (player->hunger <= HUNGER) msg->hungryMessage();
 
 			gameMap->makeExpMap();
 			ui->updateUI();
@@ -582,7 +586,8 @@ int main()
 				isValidMove = player->movePlayer(up, destination.token);
 				updatePlayer();
 				battle();
-				if (isValidMove) moveEnemy();
+				updateEnemy();
+				if (isValidMove || player->isFighting) moveEnemy();
 				break;
 			case KEY_ARROW_DOWN: case KEY_s:
 				destination.x = player->location.x;
@@ -591,7 +596,8 @@ int main()
 				isValidMove = player->movePlayer(down, destination.token);
 				updatePlayer();
 				battle();
-				if (isValidMove) moveEnemy();
+				updateEnemy();
+				if (isValidMove || player->isFighting) moveEnemy();
 				break;
 			case KEY_ARROW_LEFT: case KEY_a:
 				destination.x = player->location.x - 1;
@@ -600,7 +606,8 @@ int main()
 				isValidMove = player->movePlayer(left, destination.token);
 				updatePlayer();
 				battle();
-				if (isValidMove) moveEnemy();
+				updateEnemy();
+				if (isValidMove || player->isFighting) moveEnemy();
 				break;
 			case KEY_ARROW_RIGHT: case KEY_d:
 				destination.x = player->location.x + 1;
@@ -609,7 +616,8 @@ int main()
 				isValidMove = player->movePlayer(right, destination.token);
 				updatePlayer();
 				battle();
-				if (isValidMove) moveEnemy();
+				updateEnemy();
+				if (isValidMove || player->isFighting) moveEnemy();
 				break;
 			}			
 

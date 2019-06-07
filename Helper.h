@@ -25,6 +25,7 @@
 #define FULL_HEAL 999
 #define SHORT_REST_HUNGER_COST 25
 #define LONG_REST_HUNGER_COST 325
+#define HUNGER 25
 
 // ============================
 // ========== ENUMS ===========

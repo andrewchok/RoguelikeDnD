@@ -63,7 +63,7 @@ public:
 
 	int numOfEnemiesEngaged = 0;
 
-	int floor = 0;
+	int floor = 1;
 	int gold = 0;
 	int exp = 0;
 	int hunger = 500;
@@ -101,6 +101,8 @@ public:
 		if (destination == 'M') return true;
 		if (destination == 'N') return true;
 		if (destination == 'W') return true;
+
+		isFighting = false;
 
 		return false;
 	}

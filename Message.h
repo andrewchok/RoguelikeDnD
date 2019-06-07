@@ -35,6 +35,46 @@ public:
 		messageQueue.push(messageStr);
 	}
 
+	void playerAttackMessage(PlayerCharacter* player, EnemyCharacter* enemy, int dmgDealtToEnemy)
+	{
+		messageStr = "";
+
+		if (dmgDealtToEnemy > 0)
+		{
+			messageStr = "You swung and hit " + enemy->name + " for " + std::to_string(dmgDealtToEnemy) + " damage. ";
+		}
+		else
+		{
+			messageStr = "You swung and missed!";
+		}
+
+		messageQueue.push(messageStr);
+
+		messageStr = "";
+
+		if (enemy->hitPoints <= 0)
+		{
+			messageStr = enemy->name + " was defeated! You gained " + std::to_string(enemy->expReward) + " Exp!";
+			messageQueue.push(messageStr);
+		}
+	}
+
+	void enemyAttackMessage(EnemyCharacter* enemy, PlayerCharacter* player, int dmgDealtToPlayer)
+	{
+
+		messageStr = "";
+		if (dmgDealtToPlayer > 0)
+		{
+			messageStr = enemy->name + " swung and hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
+		}
+		else
+		{
+			messageStr = enemy->name + " swung and missed!";
+		}
+
+		messageQueue.push(messageStr);
+	}
+
 	void attackMessage(PlayerCharacter* player, EnemyCharacter* enemy, int dmgDealtToEnemy, int dmgDealtToPlayer)
 	{
 		messageStr = "";
@@ -71,22 +111,6 @@ public:
 		messageQueue.push(messageStr);
 	}
 
-	void attackMessage(EnemyCharacter* enemy, int dmgDealtToPlayer)
-	{
-		messageStr = "";
-
-		if (dmgDealtToPlayer > 0)
-		{
-			messageStr = enemy->name + " swung and hit you for " + std::to_string(dmgDealtToPlayer) + " damage. ";
-		}
-		else
-		{
-			messageStr = enemy->name + " swung and missed!";
-		}
-
-		messageQueue.push(messageStr);
-	}
-
 	void goldMessage(int amount)
 	{
 		messageStr = "";
@@ -112,6 +136,16 @@ public:
 		messageStr = "You have " + std::to_string(player->rations) + " Rations, eat one? press <e> to eat";
 
 		messageQueue.push(messageStr);
+	}
+
+	void hungryMessage()
+	{
+		messageStr = "";
+
+		messageStr = "You are feeling hungry. You should eat something.";
+
+		messageQueue.push(messageStr);
+
 	}
 
 	void eatMessage()
