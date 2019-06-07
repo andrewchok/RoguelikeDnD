@@ -529,7 +529,8 @@ int main()
 			updateItem();
 			updateEnemy();
 			
-			if (player->hunger <= HUNGER) msg->hungryMessage();
+			if (player->hunger <= 0) msg->hungryDmgMessage();
+			else if (player->hunger <= HUNGER) msg->hungryMessage();
 
 			gameMap->makeExpMap();
 			ui->updateUI();

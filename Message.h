@@ -148,6 +148,16 @@ public:
 
 	}
 
+	void hungryDmgMessage()
+	{
+		messageStr = "";
+
+		messageStr = "The hunger is overwhelming. You took a damage.";
+
+		messageQueue.push(messageStr);
+
+	}
+
 	void eatMessage()
 	{
 		messageStr = "";
