@@ -15,19 +15,33 @@ class GameMap
 {
 public:
 
+	// holds the base map that is created (rooms, corridors, stairs, rest area)
 	char map[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };
+
+	// holds which areas are explored
 	bool isExplored[GAME_WIDTH][GAME_MAP_HEIGHT] = { false };
+
+	// holds the areas to be displayed if explored
 	char expMap[GAME_WIDTH + 1][GAME_MAP_HEIGHT] = { 0 };	// exp -> explored
+	
+	// holds the string of the map to be passed to main
 	std::string mapStr = "";
+
 	char destination = ' ';
-	bool newLvl = true;
+	bool newFloor = true;
 	Coordinate stairs_loc;
 	Coordinate restArea_loc;
 
+	// holds an array room numbers to shuffle and randomize
 	std::array<int, 9> roomNumberList{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	// holds the number of rooms to create
 	int numberOfRooms = 0;
+
+	// holds a vector of rooms that have been created
 	std::vector<Room*> roomList = {};
 
+	// holds the location corrdinates of all the doors on the floor
 	std::vector<Coordinate> doorLocations;
 
 	GameMap() 
@@ -37,6 +51,7 @@ public:
 
 	~GameMap() {};
 
+	// given room info, draws the room on the map
 	bool drawRoom(Room * room)
 	{
 		for (int y = room->y_start; y < room->y_start + room->y_size; y++)
@@ -67,6 +82,16 @@ public:
 		return true;
 	}
 
+	// creates a room given a number 1-9 where the map is divided into a 3x3 grid to place rooms:
+	// 1 : top-right
+	// 2 : top-center
+	// 3 : top-left 
+	// 4 : center-right
+	// 5 : center      
+	// 6 : center-left 
+	// 7 : bottom-right
+	// 8 : bottom-center
+	// 9 : bottom-left 
 	bool createRoom(RoomNumber room)
 	{
 		// size of room
@@ -86,6 +111,10 @@ public:
 		return true;
 	}
 
+	// given the type of room, creates doors on the rooms:
+	// corner rooms are given 2 doors,
+	// middle edge rooms are given 3 doors,
+	// and center is given 4 doors.
 	void createDoor(Room * room)
 	{
 		std::vector<DoorOrientation> door = {};
@@ -146,14 +175,6 @@ public:
 			break;
 		}
 
-		//unsigned seed = 0;
-		//random_shuffle(door.begin(), door.end());
-
-		//for (int i = randomNumber(0, maxDoors - 1); i > 0; i--)
-		//{
-		//	door.pop_back();
-		//}
-
 		for (auto n : door)
 		{
 			int x = 0;
@@ -206,10 +227,11 @@ public:
 		}
 	}
 
+	
+	// choose random room
+	// place randomly in that room 
 	bool placeStairs()
 	{
-		// choose random room
-		// place randomly in that room but not on top of any items
 		int x_start = this->roomList[2]->x_start;
 		int y_start = this->roomList[2]->y_start;
 
@@ -230,8 +252,12 @@ public:
 		return false;
 	}
 
+	// place rest area on map
+	// choose random room
+	// place randomly in that room 
 	bool placeRestArea()
 	{
+		// checks if to place rest area on map 25% chance
 		if (randomNumber(1, 4) != 1)
 		{
 			restArea_loc.x = 0;
@@ -239,8 +265,6 @@ public:
 			return false;
 		}
 
-		// choose random room
-		// place randomly in that room but not on top of any items
 		int x_start = this->roomList[5]->x_start;
 		int y_start = this->roomList[5]->y_start;
 
@@ -261,6 +285,7 @@ public:
 		return false;
 	}
 
+	// clears the map with ' ' (space characters)
 	void clearMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -273,6 +298,7 @@ public:
 		}
 	}
 
+	// check if room player will be spawned in can reach the room the stairs are spawned in.
 	bool isMapValid(int start_x, int start_y, bool visited[GAME_WIDTH + 1][GAME_MAP_HEIGHT], int end_x, int end_y)
 	{
 		if (map[start_x][start_y] == '.' || map[start_x][start_y] == '+' || map[start_x][start_y] == '#' )
@@ -321,19 +347,13 @@ public:
 		return false;
 	}
 
+	// creates corridors with a mix of flood fill and drunken walker algorithms.
 	bool createCorridor(int x, int y, bool visited[GAME_WIDTH][GAME_MAP_HEIGHT], int start_x, int start_y, std::array<Direction, 10> dir, Direction lastMove)
 	{
 		if (x != start_x || y != start_y)
 		{
 			if (map[x][y] == '#') return true;
 			if (map[x][y] == '+') return true;
-			//{
-			//	for (auto coord : doorLocations)
-			//	{
-			//		if (coord.x == x && coord.y == y) return true;
-			//	}
-
-			//}
 			if (x >= GAME_WIDTH - 1 || y >= GAME_MAP_HEIGHT - 1) return false;
 			if (x < 1 || y < 1) return false;
 			if (visited[x][y] == true) return false;
@@ -342,6 +362,7 @@ public:
 			visited[x][y] = true;
 		}
 
+		// drunken walker random movement, where last move is prefered movement
 		switch (lastMove)
 		{
 		case DOOR_TOP:
@@ -361,6 +382,7 @@ public:
 		random_shuffle(dir.begin(), dir.end());
 		lastMove = dir.front();
 
+		// flood fill algorithm to recursively call when desitnation is reached
 		for (auto n : dir)
 		{
 			switch (n)
@@ -398,14 +420,19 @@ public:
 		return false;
 	}
 
+	// creates a new map to be placed into map double char array
 	void createNewMap()
 	{
 		while(true)
 		{
 			Init();
 			roomList.clear();
+			
+			// creates between 6 - 9 rooms per map
 			numberOfRooms = randomNumber(6, 9);
 			unsigned seed = 0;
+
+			// randomizes where rooms to create
 			random_shuffle(roomNumberList.begin(), roomNumberList.end());
 
 			for (int i = 0; i < numberOfRooms; i++)
@@ -463,21 +490,7 @@ public:
 		} 
 	}
 
-	void refreshMap()
-	{
-		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
-		{
-			for (int x = 0; x < GAME_WIDTH; x++)
-			{
-				if (isExplored[x][y])
-				{
-					expMap[x][y] = map[x][y];
-				}
-			}
-			expMap[GAME_WIDTH][y] = '\n';
-		}
-	}
-
+	// updates the Explored Map if player has discovered new areas
 	void refreshExpMap()
 	{
 		for (int y = 0; y < GAME_MAP_HEIGHT; y++)
@@ -497,6 +510,7 @@ public:
 		}
 	}
 
+	// turns the ExpMap double char array into a string to pass to main
 	void makeExpMap()
 	{
 		mapStr = "";
@@ -509,6 +523,7 @@ public:
 		}
 	}
 
+	// recursive function to explore the room when the player walks into it
 	void exploreRoom(int start_x, int start_y)
 	{
 		if (start_x >= GAME_WIDTH || start_y >= GAME_MAP_HEIGHT) return;
@@ -530,12 +545,14 @@ public:
 		exploreRoom(start_x + 1, start_y + 1);		
 	}
 
+	// checks the players immediate surrounding to explore
 	bool checkSurrounding(char surr)
 	{
 		if (surr == '#' || surr == '+' || surr == '-' || surr == '|') return true;
 		else return false;
 	}
 
+	// explores the players immediate surrounding when traversing the corridors
 	void exploreSurrounding(int start_x, int start_y)
 	{
 		isExplored[start_x + 1][start_y + 1] ? true : isExplored[start_x + 1][start_y + 1] = checkSurrounding(map[start_x + 1][start_y + 1]);
@@ -548,6 +565,7 @@ public:
 		isExplored[start_x - 1][start_y - 1] ? true : isExplored[start_x - 1][start_y - 1] = checkSurrounding(map[start_x - 1][start_y - 1]);
 	}
 
+	// method to handle players exploration of the map
 	void explore(int player_x, int player_y)
 	{
 		if (map[player_x][player_y] == '.' || map[player_x][player_y] == '%')
@@ -564,12 +582,7 @@ public:
 		}
 	}
 
-	void revealMapTile(int x, int y)
-	{
-		expMap[x][y] = map[x][y];
-		isExplored[x][y] = true;
-	}
-
+	// initalizes the GameMap various arrays to be used to create a new map
 	void Init()
 	{
 		clearMap();

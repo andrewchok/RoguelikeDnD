@@ -9,35 +9,65 @@
 #include "Message.h"
 
 // Variables
+
+// This will capture the players key strokes as inputs
 int input = -1;
+
+// This is a special area where the player name among other things will be displayed
 std::string specialMsgStr = "";
+
+// This will hold all the text to presented in game when its needs to be updated
 std::string gameStr = "";
 
+// Holds the destination x & y location in the grid and its token value
 Destination destination;
+
+// flag to check if player move is valid
 bool isValidMove = false;
-int enemyHitRoll[10] = { 0 };
-bool newLvl = true;
+
+// flag to see if it is a new floor
+bool newFloor = true;
+
+// number of enemies to spawn in the game
 int spawnEnemies = 0;
+
+// number of items to spawn in the game
 int spawnItems = 0;
+
+// flag to check if eating
 bool isEating = false;
+
+// flag to check if can rest
 bool canRest = false;
+
+// holds the amount player will heal for
 int healAmt = 0;
 
+// various screen used in the game
 StartScreen* startScreen = new StartScreen();
 InfoScreen* infoScreen = new InfoScreen();
 DeathScreen* deathScreen = new DeathScreen();
 
+// This is the player class
 PlayerCharacter* player;
+
+// This is an array of items that can spawn in the game where the cap is 10
 Item* item[10] = { 0 };
+
+// This is an array of enemies that can spawn in the game where the cap is 10
 EnemyCharacter* enemy[10] = { 0 };
 
+// This will hold messages to display to the player for various events
 Message* msg = new Message();
+
+// This holds the game map that is created and displayed
 GameMap* gameMap = new GameMap();
+
+// This will hold the players character information in the game
 PlayerInfo* ui;
 
 
 // Method Declarations
-int randomNumber(int min, int max);
 
 void updateSpecialMsg();
 
@@ -66,12 +96,11 @@ void updateSpecialMsg()
 	specialMsgStr = "Name:" + player->name + "     Level:" + std::to_string(player->level) + "    Class:" + player->dndClass + "    Rations:" + std::to_string(player->rations) + "(5)\n" ;
 }
 
+// randomly check for how many items to spawn 1-10
+// choose random room to spawn
+// place randomly in that room but not on top of stairs
 void spawnItem()
 {
-
-	// randomly check for how many items to spawn 1-10
-	// choose random room to spawn
-	// place randomly in that room but not on top of stairs
 	for (int i = 0; i < 10; i++)
 	{
 		if (item[i] != nullptr)
@@ -131,6 +160,7 @@ void spawnItem()
 	}
 }
 
+// updates the state of all the items in the game
 void updateItem()
 {
 	for (int i = 0; i < spawnItems; i++)
@@ -165,6 +195,7 @@ void updateItem()
 	}
 }
 
+// checks if the player wants to eat
 void eatCheck()
 {
 	msg->eatCheckMessage(player);
@@ -197,6 +228,8 @@ void eatCheck()
 	isEating = false;
 }
 
+// checks if the player can rest (if all enemies are defeated on current floor)
+// and checks if the player wants to short or long rest
 void restCheck()
 {
 	msg->restPromptMessage();
@@ -259,10 +292,11 @@ void restCheck()
 	canRest = false;
 }
 
+// places the player on the floor by:
+// choose random room
+// place randomly in that room 
 bool placePlayer()
 {
-	// choose random room
-	// place randomly in that room but not on top of any items
 	int x_start = gameMap->roomList.front()->x_start;
 	int y_start = gameMap->roomList.front()->y_start;
 
@@ -282,17 +316,19 @@ bool placePlayer()
 	return false;
 }
 
+// updates the state of player in the game
 void updatePlayer()
 {
 	gameMap->expMap[player->location.x][player->location.y] = '@';
 	if (player->levelUp()) msg->levelUpMessage(player->level);
 }
 
+
+// randomly check for how many enemies to spawn based on player level
+// types of enemies depend on current floor
+// choose random room to spawn enemies
 void spawnEnemy()
 {
-	// randomly check for how many enemies to spawn based on player level
-	// types of enemies depend on current floor
-	// choose random room to spawn enemies
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemy[i] != nullptr)
@@ -420,6 +456,7 @@ void spawnEnemy()
 	}
 }
 
+// updates the state of all the enemies in the game
 void updateEnemy()
 {
 	for (int i = 0; i < spawnEnemies; i++)
@@ -440,6 +477,8 @@ void updateEnemy()
 	}	
 }
 
+// passes the enemy (if it is not null) to a movement algorithm 
+// and checks if the enemy is fighting the player
 void moveEnemy()
 {
 	for (int i = 0; i < spawnEnemies; i++)
@@ -456,6 +495,7 @@ void moveEnemy()
 	}
 }
 
+// method to check if the player is moving into an enemy to trigger player attack
 void battle()
 {
 	if (player->isFighting)
@@ -465,15 +505,14 @@ void battle()
 			if (enemy[i] != nullptr && destination.x == enemy[i]->location.x && destination.y == enemy[i]->location.y)
 			{
 				int dmgDealtToEnemy = player->attack(enemy[i]);
-				//int dmgDealtToPlayer = enemy[i]->attack(player);
 				msg->playerAttackMessage(player, enemy[i], dmgDealtToEnemy);
-				//msg->attackMessage(player, enemy[i], dmgDealtToEnemy, dmgDealtToPlayer);
 				break;
 			}
 		}
 	}
 }
 
+// puts all the information together into gameStr to print
 void drawGame()
 {
 	system("CLS");
@@ -482,62 +521,31 @@ void drawGame()
 	std::cout << gameStr;
 }
 
-//#include "windows.h"
-//HANDLE screen_beta = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-//HANDLE screen_alpha = GetStdHandle(STD_OUTPUT_HANDLE);
-//
-//void drawGame()
-//{
-//	//system("CLS");
-//	gameStr = "";
-//	gameStr = msg->messageStr + gameMap->mapStr + ui->uiStr + specialMsgStr;
-//
-//	DWORD written = 0;
-//	char* gameCHAR = (char*)malloc(sizeof(char)*(gameStr.length()+1));
-//	for (int i = 0; i < gameStr.length(); i++) gameCHAR[i] = gameStr[i];
-//
-//	if (GetStdHandle(STD_OUTPUT_HANDLE) == screen_alpha)
-//	{
-//		WriteConsoleA(screen_beta, gameCHAR, gameStr.length()+1, &written, NULL);
-//		SetConsoleActiveScreenBuffer(screen_beta);
-//		free(gameCHAR);
-//	}
-//	else if (GetStdHandle(STD_OUTPUT_HANDLE) == screen_beta)
-//	{
-//		WriteConsoleA(screen_alpha, gameCHAR, gameStr.length()+1, &written, NULL);
-//		SetConsoleActiveScreenBuffer(screen_alpha);
-//		free(gameCHAR);
-//	}
-//	else
-//	{
-//		free(gameCHAR);
-//		exit(EXIT_FAILURE);
-//	}
-//	
-//	//std::cout << gameStr;
-//}
-
-
 // Main function
-
 int main()
 {
+	// Entire Program loop
 	while (true)
 	{
+		// show start screen
 		startScreen->drawStartScreen();
 		if (startScreen->playerName == "quit") break;
 
+		// show info screen
 		infoScreen->drawInfoScreen();
 
+		// create new player character instance for new game
 		player = new Fighter();
 		ui = new PlayerInfo(player);
 
 		player->name = startScreen->playerName;
-		newLvl = true;
-
+		newFloor = true;
+		
+		// Game loop
 		while (true)
 		{
-			if (newLvl)
+			// checks if new level
+			if (newFloor)
 			{
 				gameMap->createNewMap();
 				placePlayer();
@@ -549,7 +557,7 @@ int main()
 				spawnItem();
 
 				msg->floorMessage(player->floor);
-				newLvl = false;
+				newFloor = false;
 			}
 			else
 			{
@@ -560,6 +568,7 @@ int main()
 			updateItem();
 			updateEnemy();
 			
+			// if hunger, alert player
 			if (player->hunger <= 0) msg->hungryDmgMessage();
 			else if (player->hunger <= HUNGER) msg->hungryMessage();
 
@@ -567,6 +576,7 @@ int main()
 			ui->updateUI();
 			updateSpecialMsg();
 			
+			// if multiple messages, stop player to read
 			do
 			{
 				msg->popMessage();
@@ -587,6 +597,7 @@ int main()
 			
 			input = _getch();
 
+			// if player is dead, show death screen
 			if (player->hitPoints <= 0)
 			{
 				deathScreen->drawDeathScreen();
@@ -605,8 +616,8 @@ int main()
 				{
 					input = _getch();
 					if (input == KEY_q) break;
-					if (input == KEY_s) continue; //write save game function
-					if (input == KEY_l) continue; //write load game function
+					if (input == KEY_s) continue; //write save game function (future)
+					if (input == KEY_l) continue; //write load game function (future)
 				}
 			}
 
@@ -656,11 +667,12 @@ int main()
 				break;
 			}			
 
+			// trigger using stairs or rest area event
 			if (input == KEY_e)
 			{
 				if (player->location.x == gameMap->stairs_loc.x && player->location.y == gameMap->stairs_loc.y)
 				{
-					newLvl = true;
+					newFloor = true;
 					player->floor++;
 					player->exp += 100;
 					continue;
@@ -687,6 +699,7 @@ int main()
 				}
 			}
 
+			// trigger eating event
 			if (input == KEY_f)
 			{
 				isEating = true;
